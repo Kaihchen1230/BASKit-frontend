@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Container, FormControl, Button, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
-import Input from '../../components/UI/Input';
+import Input from '../../components/UI/input/Input';
 
-const Login = () => {
+const Login = (props) => {
 	const [loginFormControls, setLoginFormControl] = useState({
 		username: {
-			elementType: 'input',
 			elementConfig: {
 				label: 'Username',
 				type: 'text',
@@ -21,7 +20,6 @@ const Login = () => {
 			touched: false,
 		},
 		password: {
-			elementType: 'input',
 			elementConfig: {
 				label: 'Password',
 				type: 'password',
@@ -68,9 +66,7 @@ const Login = () => {
 
 	const handleLogin = (event) => {
 		event.preventDefault();
-
-		console.log('this is logincontrols: ', loginFormControls);
-		alert('login clicked');
+		props.history.push('/home');
 	};
 
 	const formElements = [];
@@ -101,7 +97,18 @@ const Login = () => {
 		<Container fixed>
 			<form onSubmit={handleLogin}>
 				{form}
-				<Button variant='contained' color='primary' type='submit'>
+				<Button
+					variant='contained'
+					color='primary'
+					type='submit'
+					disabled={
+						!(
+							loginFormControls.username.touched &&
+							loginFormControls.username.valid &&
+							loginFormControls.password.touched &&
+							loginFormControls.password.valid
+						)
+					}>
 					Login
 				</Button>
 			</form>

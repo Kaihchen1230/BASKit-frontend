@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Container, FormControl, Button, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
-import Input from '../../components/UI/Input';
+import Input from '../../components/UI/input/Input';
 
 const SignUp = (props) => {
 	const [signUpFormControls, setSignUpFormControls] = useState({
 		username: {
-			elementType: 'input',
 			elementConfig: {
 				label: 'Username',
 				type: 'text',
@@ -21,7 +20,6 @@ const SignUp = (props) => {
 			touched: false,
 		},
 		email: {
-			elementType: 'email',
 			elementConfig: {
 				label: 'Email',
 				type: 'email',
@@ -36,7 +34,6 @@ const SignUp = (props) => {
 			touched: false,
 		},
 		password: {
-			elementType: 'input',
 			elementConfig: {
 				label: 'Password',
 				type: 'password',
@@ -51,23 +48,21 @@ const SignUp = (props) => {
 			touched: false,
 		},
 		confirmPassword: {
-			elementType: 'input',
 			elementConfig: {
 				label: 'Confirm Password',
 				type: 'password',
-				helperText: 'Password has to be at least 8 characters long',
+				helperText: 'Password has to be matched',
 			},
 			value: '',
 			validation: {
 				required: true,
 				minLength: 8,
+				passwordMatched: true,
 			},
 			valid: false,
 			touched: false,
 		},
 	});
-
-	const [isValidSignUpForm, setIsValidSignUpForm] = useState(false);
 
 	const checkValidity = (value, rules) => {
 		let isValid = true;
@@ -81,9 +76,12 @@ const SignUp = (props) => {
 		}
 
 		if (rules.minLength) {
-			isValid = isValid.length >= rules.minLength && isValid;
+			isValid = value.length >= rules.minLength && isValid;
 		}
 
+		if (rules.passwordMatched) {
+			isValid = value === signUpFormControls.password.value && isValid;
+		}
 		if (rules.isEmail) {
 			const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 			isValid = pattern.test(value) && isValid;
@@ -111,7 +109,7 @@ const SignUp = (props) => {
 
 	const handleSignUp = (event) => {
 		event.preventDefault();
-		console.log('this is signupform: ', signUpFormControls);
+		props.history.push('/login');
 		alert('sign up clicked');
 	};
 
@@ -130,7 +128,6 @@ const SignUp = (props) => {
 			key={formElement.id}
 			style={{ marginBottom: '20px' }}>
 			<Input
-				elementType={formElement.elementType}
 				elementConfig={formElement.config.elementConfig}
 				value={formElement.config.value}
 				invalid={!formElement.config.valid}
@@ -144,7 +141,22 @@ const SignUp = (props) => {
 		<Container fixed>
 			<form onSubmit={handleSignUp}>
 				{form}
-				<Button variant='contained' color='primary' type='submit'>
+				<Button
+					variant='contained'
+					color='primary'
+					type='submit'
+					disabled={
+						!(
+							signUpFormControls.username.valid &&
+							signUpFormControls.username.touched &&
+							signUpFormControls.email.valid &&
+							signUpFormControls.email.touched &&
+							signUpFormControls.password.valid &&
+							signUpFormControls.password.touched &&
+							signUpFormControls.confirmPassword.valid &&
+							signUpFormControls.confirmPassword.touched
+						)
+					}>
 					Sign Up
 				</Button>
 			</form>

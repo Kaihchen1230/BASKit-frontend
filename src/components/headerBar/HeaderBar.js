@@ -8,13 +8,20 @@ import {
 } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons';
 
+import logo from '../../baskitLogo.jpeg';
+
 const HeaderBar = (props) => {
 	return (
 		<AppBar position='static'>
 			<Toolbar>
-				<IconButton edge='start' color='inherit' aria-label='menu'>
-					Our logo
-				</IconButton>
+				<img
+					src={logo}
+					alt='Baskit Logo'
+					style={{
+						width: '70px',
+						borderRadius: '80%',
+					}}
+				/>
 				<Typography variant='h6' style={{ flexGrow: 1 }}>
 					{/* Photos */}
 				</Typography>
