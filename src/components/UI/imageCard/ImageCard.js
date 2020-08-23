@@ -20,9 +20,10 @@ const ImageCard = (props) => {
 					display: 'flex',
 					alignItems: 'center',
 					justifyContent: 'center',
-				}}>
+				}}
+			>
 				<Button size='small' variant='contained' color='primary'>
-					Save
+					{props.buttonName}
 				</Button>
 			</CardActions>
 		</Card>

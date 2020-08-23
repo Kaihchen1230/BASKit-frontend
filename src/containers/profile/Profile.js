@@ -16,7 +16,7 @@ const images = [
 const Profile = (props) => {
 	const imageArea = images.map((imgUrl) => (
 		<Grid key={imgUrl} item xs={12} sm={4} md={4} lg={4}>
-			<ImageCard imgUrl={imgUrl} />
+			<ImageCard imgUrl={imgUrl} buttonName='Delete' />
 		</Grid>
 	));
 

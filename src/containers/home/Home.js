@@ -56,7 +56,7 @@ const Home = () => {
 				value: event.target.value,
 				valid: checkValidity(
 					event.target.value,
-					prevState[controlName].validation,
+					prevState[controlName].validation
 				),
 				touched: true,
 			},
@@ -73,7 +73,7 @@ const Home = () => {
 	if (showImage) {
 		imageArea = images.map((imgUrl) => (
 			<Grid key={imgUrl} item xs={12} sm={4} md={4} lg={4}>
-				<ImageCard imgUrl={imgUrl} />
+				<ImageCard imgUrl={imgUrl} buttonName='Save' />
 			</Grid>
 		));
 	}
@@ -108,7 +108,8 @@ const Home = () => {
 									searchFormControl.searchField.touched &&
 									searchFormControl.searchField.valid
 								)
-							}>
+							}
+						>
 							Search
 						</Button>
 					</Grid>
