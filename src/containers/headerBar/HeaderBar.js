@@ -6,7 +6,7 @@ import ProfileArea from '../../components/headerBar/profileArea/ProfileArea';
 
 const HeaderBar = (props) => {
 	return (
-		<AppBar position='static'>
+		<AppBar position='static' style={{ marginBottom: '40px' }}>
 			<Toolbar>
 				<LogoArea />
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
 	IconButton,
@@ -10,7 +10,7 @@ import {
 	MenuItem,
 	Link,
 } from '@material-ui/core';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import { AccountCircle } from '@material-ui/icons';
 
 const ProfileArea = (props) => {
 	const [open, setOpen] = React.useState(false);
@@ -52,7 +52,8 @@ const ProfileArea = (props) => {
 				aria-controls={open ? 'menu-list-grow' : undefined}
 				aria-haspopup='true'
 				color='inherit'
-				onClick={handleToggle}>
+				onClick={handleToggle}
+			>
 				<AccountCircle fontSize='large' />
 			</IconButton>
 			<Popper
@@ -60,26 +61,30 @@ const ProfileArea = (props) => {
 				anchorEl={anchorRef.current}
 				role={undefined}
 				transition
-				disablePortal>
+				disablePortal
+			>
 				{({ TransitionProps, placement }) => (
 					<Grow
 						{...TransitionProps}
 						style={{
 							transformOrigin:
 								placement === 'bottom' ? 'center top' : 'center bottom',
-						}}>
+						}}
+					>
 						<Paper>
 							<ClickAwayListener onClickAway={handleClose}>
 								<MenuList
 									autoFocusItem={open}
 									id='menu-list-grow'
-									onKeyDown={handleListKeyDown}>
+									onKeyDown={handleListKeyDown}
+								>
 									<MenuItem onClick={handleClose}>
 										<Link
 											component={RouterLink}
 											to='/profile'
 											underline='none'
-											color='textPrimary'>
+											color='textPrimary'
+										>
 											My Profile
 										</Link>
 									</MenuItem>
