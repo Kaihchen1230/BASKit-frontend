@@ -1,24 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 
-import SignUp from './components/signUp/SignUp';
-import Login from './components/login/Login';
-import Home from './components/home/Home';
+import HeaderBar from './containers/headerBar/HeaderBar';
+import SignUp from './containers/signUp/SignUp';
+import Login from './containers/login/Login';
+import Home from './containers/home/Home';
+import Profile from './containers/profile/Profile';
 
 function App() {
-	const [isAuth, setIsAuth] = useState(false);
-
-	useEffect(() => {
-		setIsAuth(true);
-	}, []);
+	console.log('this is app');
 
 	return (
 		<div>
+			<HeaderBar />
 			<Switch>
-				{isAuth ? <Route exact path='/' component={Home} /> : null}
+				{/* {isAuth ? <Route exact path='/' component={Home} /> : null} */}
 				<Route path='/sign-up' component={SignUp} />
 				<Route path='/login' component={Login} />
-				<Redirect from='/' to='/login' />
+				<Route path='/profile' component={Profile} />
+				<Route eact path='/' component={Home} />
+				{/* <Redirect from='/' to='/login' /> */}
 			</Switch>
 		</div>
 	);
