@@ -37,9 +37,6 @@ const Login = (props) => {
 		},
 	});
 
-	const [alertSeverity, setAlertSeverity] = useState('');
-	const [alertMessage, setAlertMessage] = useState('');
-
 	const checkValidity = (value, rules) => {
 		let isValid = true;
 

@@ -8,13 +8,17 @@ import Login from './containers/auth/login/Login';
 import Logout from './containers/auth/logout/logout';
 import Home from './containers/home/Home';
 import Profile from './containers/profile/Profile';
+import * as actions from './store/actions/auth';
 
 function App(props) {
 	let user = localStorage.getItem('user');
 	// let usersData = localStorage.getItem('usersData');
 
 	user = JSON.parse(user);
-	console.log('this is in app');
+
+	if (user) {
+		props.onAuth(user.username, user.password);
+	}
 	// usersData = JSON.parse(usersData);
 
 	// if (usersData) {
@@ -57,4 +61,10 @@ const mapStateToProps = (state) => {
 	};
 };
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		onAuth: (username, password) => dispatch(actions.auth(username, password)),
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
