@@ -3,11 +3,11 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import HeaderBar from './containers/headerBar/HeaderBar';
-import SignUp from './containers/signUp/SignUp';
-import Login from './containers/login/Login';
+import SignUp from './containers/auth/signUp/SignUp';
+import Login from './containers/auth/login/Login';
+import Logout from './containers/auth/logout/logout';
 import Home from './containers/home/Home';
 import Profile from './containers/profile/Profile';
-import * as actions from './store/actions';
 
 function App(props) {
 	let user = localStorage.getItem('user');
@@ -31,17 +31,18 @@ function App(props) {
 		</Switch>
 	);
 
-	if (user) {
+	if (props.isAuthenticated) {
 		authRoutes = (
 			<Switch>
 				<Route exact path='/home' component={Home} />
 				<Route path='/profile' component={Profile} />
+				<Route path='/logout' component={Logout} />
 				<Redirect to='/home' />
 			</Switch>
 		);
 	}
 
-	props.getUserInfo(user);
+	// props.getUserInfo(user);
 
 	return (
 		<div>
@@ -50,15 +51,10 @@ function App(props) {
 		</div>
 	);
 }
-
-const mapDispatchToProps = (dispatch) => {
+const mapStateToProps = (state) => {
 	return {
-		getUserInfo: (userInfo) =>
-			dispatch({
-				type: actions.GET_USER,
-				payload: { userInfo: userInfo },
-			}),
+		isAuthenticated: state.username !== null,
 	};
 };
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

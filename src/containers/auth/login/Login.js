@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Container, FormControl, Button, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Input from '../../components/UI/input/Input';
-import AlertMessage from '../../components/UI/alert/AlertMessage';
-import * as actions from '../../store/actions';
+import Input from '../../../components/UI/input/Input';
+import AlertMessage from '../../../components/UI/alert/AlertMessage';
+import * as actions from '../../../store/actions/auth';
 
 const Login = (props) => {
 	const [loginFormControls, setLoginFormControl] = useState({
@@ -73,29 +73,10 @@ const Login = (props) => {
 	const handleLogin = (event) => {
 		event.preventDefault();
 
-		let localStorageUsersData = localStorage.getItem('usersData');
-		localStorageUsersData = JSON.parse(localStorageUsersData);
-
-		let userExist = null;
-
-		if (localStorageUsersData.length > 0) {
-			userExist = localStorageUsersData.find(
-				(user) =>
-					user.username === loginFormControls.username.value &&
-					user.password === loginFormControls.password.value,
-			);
-		}
-		console.log('this is userExist: ', userExist);
-
-		if (!userExist) {
-			setAlertSeverity('error');
-			setAlertMessage('You Have Entered Invalid Username and/or Password');
-		} else {
-			// localStorageUsersData.push(newUser);
-			props.getUserInfo(userExist);
-			props.history.push('/home');
-			localStorage.setItem('user', JSON.stringify(userExist));
-		}
+		props.onAuth(
+			loginFormControls.username.value,
+			loginFormControls.password.value,
+		);
 	};
 
 	const formElements = [];
@@ -125,14 +106,19 @@ const Login = (props) => {
 
 	let alertComponent = null;
 
-	if (alertMessage) {
-		alertComponent = (
-			<AlertMessage severity={alertSeverity} message={alertMessage} />
-		);
+	if (props.error) {
+		alertComponent = <AlertMessage severity='error' message={props.error} />;
+	}
+
+	let authRedirect = null;
+
+	if (props.isAuthenticated) {
+		authRedirect = <Redirect to='/home' />;
 	}
 
 	return (
 		<Container fixed>
+			{authRedirect}
 			{alertComponent}
 			<form onSubmit={handleLogin}>
 				{form}
@@ -158,14 +144,17 @@ const Login = (props) => {
 	);
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapStateToProps = (state) => {
 	return {
-		getUserInfo: (userInfo) =>
-			dispatch({
-				type: actions.GET_USER,
-				payload: { userInfo: userInfo },
-			}),
+		error: state.error,
+		isAuthenticated: state.username !== null,
 	};
 };
 
-export default connect(null, mapDispatchToProps)(Login);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		onAuth: (username, password) => dispatch(actions.auth(username, password)),
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

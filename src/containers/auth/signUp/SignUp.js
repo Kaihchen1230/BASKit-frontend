@@ -3,9 +3,9 @@ import { Container, FormControl, Button, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Input from '../../components/UI/input/Input';
-import AlertMessage from '../../components/UI/alert/AlertMessage';
-import * as actions from '../../store/actions';
+import Input from '../../../components/UI/input/Input';
+import AlertMessage from '../../../components/UI/alert/AlertMessage';
+import * as actions from '../../../store/actions/actionTypes';
 
 const SignUp = (props) => {
 	const [signUpFormControls, setSignUpFormControls] = useState({
@@ -209,11 +209,4 @@ const SignUp = (props) => {
 	);
 };
 
-const mapDispatchToProps = (dispatch) => {
-	return {
-		signUp: (userInfo) =>
-			dispatch({ type: actions.USER_SIGN_UP, payload: { userInfo: userInfo } }),
-	};
-};
-
-export default connect(null, mapDispatchToProps)(SignUp);
+export default SignUp;

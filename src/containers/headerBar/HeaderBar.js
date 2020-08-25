@@ -8,7 +8,8 @@ import ProfileArea from '../../components/headerBar/profileArea/ProfileArea';
 const HeaderBar = (props) => {
 	let showProfileArea = null;
 
-	if (props.userInfo) {
+	console.log('this is props: ', props);
+	if (props.isAuth) {
 		showProfileArea = <ProfileArea />;
 	}
 
@@ -24,7 +25,7 @@ const HeaderBar = (props) => {
 
 const mapStateToProps = (state) => {
 	return {
-		userInfo: state.userInfo,
+		isAuth: state.username !== null,
 	};
 };
 export default connect(mapStateToProps)(HeaderBar);

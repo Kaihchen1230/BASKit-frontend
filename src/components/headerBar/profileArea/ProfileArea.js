@@ -52,8 +52,7 @@ const ProfileArea = (props) => {
 				aria-controls={open ? 'menu-list-grow' : undefined}
 				aria-haspopup='true'
 				color='inherit'
-				onClick={handleToggle}
-			>
+				onClick={handleToggle}>
 				<AccountCircle fontSize='large' />
 			</IconButton>
 			<Popper
@@ -61,34 +60,38 @@ const ProfileArea = (props) => {
 				anchorEl={anchorRef.current}
 				role={undefined}
 				transition
-				disablePortal
-			>
+				disablePortal>
 				{({ TransitionProps, placement }) => (
 					<Grow
 						{...TransitionProps}
 						style={{
 							transformOrigin:
 								placement === 'bottom' ? 'center top' : 'center bottom',
-						}}
-					>
+						}}>
 						<Paper>
 							<ClickAwayListener onClickAway={handleClose}>
 								<MenuList
 									autoFocusItem={open}
 									id='menu-list-grow'
-									onKeyDown={handleListKeyDown}
-								>
+									onKeyDown={handleListKeyDown}>
 									<MenuItem onClick={handleClose}>
 										<Link
 											component={RouterLink}
 											to='/profile'
 											underline='none'
-											color='textPrimary'
-										>
+											color='textPrimary'>
 											My Profile
 										</Link>
 									</MenuItem>
-									<MenuItem onClick={handleClose}>Logout</MenuItem>
+									<MenuItem onClick={handleClose}>
+										<Link
+											component={RouterLink}
+											to='/logout'
+											underline='none'
+											color='textPrimary'>
+											Logout
+										</Link>
+									</MenuItem>
 								</MenuList>
 							</ClickAwayListener>
 						</Paper>
