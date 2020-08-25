@@ -1,19 +1,30 @@
 import React from 'react';
 import { AppBar, Toolbar } from '@material-ui/core';
+import { connect } from 'react-redux';
 
 import LogoArea from '../../components/headerBar/logoArea/LogoArea';
 import ProfileArea from '../../components/headerBar/profileArea/ProfileArea';
 
 const HeaderBar = (props) => {
+	let showProfileArea = null;
+
+	if (props.userInfo) {
+		showProfileArea = <ProfileArea />;
+	}
+
 	return (
 		<AppBar position='static' style={{ marginBottom: '40px' }}>
 			<Toolbar>
 				<LogoArea />
-
-				<ProfileArea />
+				{showProfileArea}
 			</Toolbar>
 		</AppBar>
 	);
 };
 
-export default HeaderBar;
+const mapStateToProps = (state) => {
+	return {
+		userInfo: state.userInfo,
+	};
+};
+export default connect(mapStateToProps)(HeaderBar);

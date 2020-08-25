@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Container, FormControl, Button, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Input from '../../components/UI/input/Input';
+import AlertMessage from '../../components/UI/alert/AlertMessage';
+import * as actions from '../../store/actions';
 
 const Login = (props) => {
 	const [loginFormControls, setLoginFormControl] = useState({
@@ -33,6 +36,9 @@ const Login = (props) => {
 			touched: false,
 		},
 	});
+
+	const [alertSeverity, setAlertSeverity] = useState('');
+	const [alertMessage, setAlertMessage] = useState('');
 
 	const checkValidity = (value, rules) => {
 		let isValid = true;
@@ -66,7 +72,30 @@ const Login = (props) => {
 
 	const handleLogin = (event) => {
 		event.preventDefault();
-		props.history.push('/home');
+
+		let localStorageUsersData = localStorage.getItem('usersData');
+		localStorageUsersData = JSON.parse(localStorageUsersData);
+
+		let userExist = null;
+
+		if (localStorageUsersData.length > 0) {
+			userExist = localStorageUsersData.find(
+				(user) =>
+					user.username === loginFormControls.username.value &&
+					user.password === loginFormControls.password.value,
+			);
+		}
+		console.log('this is userExist: ', userExist);
+
+		if (!userExist) {
+			setAlertSeverity('error');
+			setAlertMessage('You Have Entered Invalid Username and/or Password');
+		} else {
+			// localStorageUsersData.push(newUser);
+			props.getUserInfo(userExist);
+			props.history.push('/home');
+			localStorage.setItem('user', JSON.stringify(userExist));
+		}
 	};
 
 	const formElements = [];
@@ -93,8 +122,18 @@ const Login = (props) => {
 			/>
 		</FormControl>
 	));
+
+	let alertComponent = null;
+
+	if (alertMessage) {
+		alertComponent = (
+			<AlertMessage severity={alertSeverity} message={alertMessage} />
+		);
+	}
+
 	return (
 		<Container fixed>
+			{alertComponent}
 			<form onSubmit={handleLogin}>
 				{form}
 				<Button
@@ -119,4 +158,14 @@ const Login = (props) => {
 	);
 };
 
-export default Login;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		getUserInfo: (userInfo) =>
+			dispatch({
+				type: actions.GET_USER,
+				payload: { userInfo: userInfo },
+			}),
+	};
+};
+
+export default connect(null, mapDispatchToProps)(Login);
