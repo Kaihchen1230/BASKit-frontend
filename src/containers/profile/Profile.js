@@ -15,8 +15,6 @@ const images = [
 ];
 
 const Profile = (props) => {
-	const [editMode, setEditMode] = useState(false);
-
 	const imageArea = images.map((imgUrl) => (
 		<Grid key={imgUrl} item xs={12} sm={4} md={4} lg={4}>
 			<ImageCard imgUrl={imgUrl} buttonName='Delete' />
@@ -27,12 +25,7 @@ const Profile = (props) => {
 		<Container fixed>
 			<Grid container spacing={3}>
 				<Grid item xs={12} sm={4} md={4}>
-					<ProfileCard
-						username={props.username}
-						email={props.password}
-						password={props.password}
-						isEditMode={editMode}
-					/>
+					<ProfileCard />
 				</Grid>
 				<Grid item xs={12} sm={8} md={8}>
 					<Grid container spacing={2}>
@@ -44,12 +37,4 @@ const Profile = (props) => {
 	);
 };
 
-const mapStateToProps = (state) => {
-	return {
-		username: state.username,
-		password: state.password,
-		email: state.email,
-	};
-};
-
-export default connect(mapStateToProps)(Profile);
+export default Profile;
