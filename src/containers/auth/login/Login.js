@@ -74,6 +74,7 @@ const Login = (props) => {
 			loginFormControls.username.value,
 			loginFormControls.password.value,
 		);
+		props.history.push('/home');
 	};
 
 	const formElements = [];

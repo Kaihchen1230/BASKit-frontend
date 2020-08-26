@@ -6,13 +6,14 @@ import {
 	CardContent,
 	CardMedia,
 	Button,
-	Typography,
 	FormControl,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 
 import profileImage from '../../../images/profileImage.jpg';
 import Input from '../input/Input';
+import ConfirmDialog from '../confirmDialog/ConfirmDialog';
+import * as actions from '../../../store/actions/auth';
 
 const ProfileCard = (props) => {
 	const [isEditMode, setIsEditMode] = useState(false);
@@ -61,11 +62,31 @@ const ProfileCard = (props) => {
 		},
 	});
 
+	const [open, setOpen] = useState(false);
+
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+
+	const handleClickClose = () => {
+		setOpen(false);
+	};
+
+	const handleDelete = () => {
+		console.log('delete press');
+		console.log('this is props in delete: ', props);
+		props.props.history.push('/logout');
+	};
+
 	const checkValidity = (value, rules) => {
 		let isValid = true;
 
 		if (!rules) {
 			return true;
+		}
+
+		if (rules.minLength) {
+			isValid = value.length >= rules.minLength && isValid;
 		}
 
 		if (rules.required) {
@@ -116,6 +137,15 @@ const ProfileCard = (props) => {
 		updateEditModeForProfileForm(isEditMode);
 		if (isEditMode) {
 			setIsEditMode(false);
+
+			props.onUpdateUser(
+				props.username,
+				props.password,
+				props.email,
+				profileFromControls.username.value,
+				profileFromControls.password.value,
+				profileFromControls.email.value,
+			);
 		} else {
 			setIsEditMode(true);
 		}
@@ -156,31 +186,7 @@ const ProfileCard = (props) => {
 				/>
 			</CardActionArea>
 
-			<CardContent style={{ paddingLeft: '40px' }}>
-				{form}
-				{/* <Typography
-					variant='body2'
-					color='textSecondary'
-					component='p'
-					style={{ paddingBottom: '20px' }}>
-					Email: {email}
-				</Typography>
-
-				<Typography
-					variant='body2'
-					color='textSecondary'
-					component='p'
-					style={{ paddingBottom: '20px' }}>
-					Username: {username}
-				</Typography>
-				<Typography
-					variant='body2'
-					color='textSecondary'
-					component='p'
-					style={{ paddingBottom: '20px' }}>
-					Password: {profilePassword}
-				</Typography> */}
-			</CardContent>
+			<CardContent style={{ paddingLeft: '40px' }}>{form}</CardContent>
 			<CardActions style={{ justifyContent: 'space-around' }}>
 				<Button
 					size='small'
@@ -189,10 +195,21 @@ const ProfileCard = (props) => {
 					onClick={handleEdit}>
 					{isEditMode ? 'Save' : 'Edit'}
 				</Button>
-				<Button size='small' color='secondary' variant='outlined'>
+				<Button
+					size='small'
+					color='secondary'
+					variant='outlined'
+					onClick={handleClickOpen}>
 					Delete Account
 				</Button>
 			</CardActions>
+			<ConfirmDialog
+				open={open}
+				handleClose={handleClickClose}
+				handleDelete={handleDelete}
+				password={profileFromControls.password.value}
+				props={props}
+			/>
 		</Card>
 	);
 };
@@ -205,4 +222,27 @@ const mapStateToProps = (state) => {
 	};
 };
 
-export default connect(mapStateToProps)(ProfileCard);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		onUpdateUser: (
+			oldUsername,
+			oldPassword,
+			oldEmail,
+			newUsername,
+			newPassword,
+			newEmail,
+		) =>
+			dispatch(
+				actions.updateUser(
+					oldUsername,
+					oldPassword,
+					oldEmail,
+					newUsername,
+					newPassword,
+					newEmail,
+				),
+			),
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileCard);

@@ -42,6 +42,31 @@ const reducer = (state = initialState, action) => {
 				password: null,
 				email: null,
 			};
+
+		case actionTypes.UPDATE_USER_START:
+			return {
+				...state,
+				error: null,
+				loading: true,
+			};
+
+		case actionTypes.UPDATE_USER_SUCCESS:
+			return {
+				...state,
+				username: action.newUsername,
+				password: action.newPassword,
+				email: action.newEmail,
+				error: null,
+				loading: false,
+			};
+
+		case actionTypes.UPDATE_USER_FAIL:
+			return {
+				...state,
+				error: action.error,
+				loading: false,
+			};
+
 		default:
 			return state;
 	}
