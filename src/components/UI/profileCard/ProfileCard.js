@@ -7,13 +7,20 @@ import {
 	CardMedia,
 	Button,
 	Typography,
-	IconButton,
 } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
 
 import profileImage from '../../../images/profileImage.jpg';
 
 const ProfileCard = (props) => {
+	const { username, password, email, isEditMode } = { ...props };
+
+	let profilePassword = '';
+	if (isEditMode) {
+		profilePassword = password;
+	} else {
+		profilePassword = '*'.repeat(password.length);
+	}
+
 	return (
 		<Card>
 			<CardActionArea style={{ padding: '20px' }}>
@@ -26,28 +33,31 @@ const ProfileCard = (props) => {
 			</CardActionArea>
 
 			<CardContent style={{ paddingLeft: '40px' }}>
-				<Typography variant='body2' color='textSecondary' component='p'>
-					Email: ......
-					<IconButton color='inherit' onClick={() => alert(200)}>
-						<Edit fontSize='small' />
-					</IconButton>
+				<Typography
+					variant='body2'
+					color='textSecondary'
+					component='p'
+					style={{ paddingBottom: '20px' }}>
+					Email: {email}
 				</Typography>
-				<Typography variant='body2' color='textSecondary' component='p'>
-					Username: ......
-					<IconButton color='inherit' onClick={() => alert(200)}>
-						<Edit fontSize='small' />
-					</IconButton>
+				<Typography
+					variant='body2'
+					color='textSecondary'
+					component='p'
+					style={{ paddingBottom: '20px' }}>
+					Username: {username}
 				</Typography>
-				<Typography variant='body2' color='textSecondary' component='p'>
-					Password: .......
-					<IconButton color='inherit' onClick={() => alert(200)}>
-						<Edit fontSize='small' />
-					</IconButton>
+				<Typography
+					variant='body2'
+					color='textSecondary'
+					component='p'
+					style={{ paddingBottom: '20px' }}>
+					Password: {profilePassword}
 				</Typography>
 			</CardContent>
 			<CardActions style={{ justifyContent: 'space-around' }}>
 				<Button size='small' color='primary' variant='outlined'>
-					Save
+					{isEditMode ? 'Save' : 'Edit'}
 				</Button>
 				<Button size='small' color='secondary' variant='outlined'>
 					Delete Account

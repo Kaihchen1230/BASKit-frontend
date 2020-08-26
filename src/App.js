@@ -31,7 +31,7 @@ function App(props) {
 		<Switch>
 			<Route path='/login' component={Login} />
 			<Route path='/sign-up' component={SignUp} />
-			<Redirect to='/login' />
+			{/* <Redirect to='/login' /> */}
 		</Switch>
 	);
 
@@ -41,7 +41,7 @@ function App(props) {
 				<Route exact path='/home' component={Home} />
 				<Route path='/profile' component={Profile} />
 				<Route path='/logout' component={Logout} />
-				<Redirect to='/home' />
+				{/* <Redirect to='/home' /> */}
 			</Switch>
 		);
 	}
