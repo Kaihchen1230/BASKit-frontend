@@ -73,9 +73,9 @@ const ProfileCard = (props) => {
 	};
 
 	const handleDelete = () => {
-		console.log('delete press');
-		console.log('this is props in delete: ', props);
-		props.props.history.push('/logout');
+		console.log('delete press and this is props: ', props);
+		props.onDeleteUser(props.username, props.password, props.email);
+		props.props.history.push('/login');
 	};
 
 	const checkValidity = (value, rules) => {
@@ -145,6 +145,7 @@ const ProfileCard = (props) => {
 				profileFromControls.username.value,
 				profileFromControls.password.value,
 				profileFromControls.email.value,
+				props.gallery,
 			);
 		} else {
 			setIsEditMode(true);
@@ -219,6 +220,7 @@ const mapStateToProps = (state) => {
 		username: state.username,
 		password: state.password,
 		email: state.email,
+		gallery: state.gallery,
 	};
 };
 
@@ -242,6 +244,8 @@ const mapDispatchToProps = (dispatch) => {
 					newEmail,
 				),
 			),
+		onDeleteUser: (username, password, email) =>
+			dispatch(actions.deleteUser(username, password, email)),
 	};
 };
 

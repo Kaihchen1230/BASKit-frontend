@@ -91,7 +91,7 @@ const ConfirmDialog = (props) => {
 				<Button
 					autoFocus
 					onClick={props.handleDelete}
-					color='primary'
+					color='secondary'
 					variant='outlined'
 					disabled={
 						!(

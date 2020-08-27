@@ -20,9 +20,12 @@ const ImageCard = (props) => {
 					display: 'flex',
 					alignItems: 'center',
 					justifyContent: 'center',
-				}}
-			>
-				<Button size='small' variant='contained' color='primary'>
+				}}>
+				<Button
+					size='small'
+					variant='contained'
+					color='primary'
+					onClick={() => props.handleClick(props.imgUrl)}>
 					{props.buttonName}
 				</Button>
 			</CardActions>

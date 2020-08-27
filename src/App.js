@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -11,59 +11,61 @@ import Profile from './containers/profile/Profile';
 import * as actions from './store/actions/auth';
 
 function App(props) {
-	let user = localStorage.getItem('user');
-	// let usersData = localStorage.getItem('usersData');
+	const [loading, setLoading] = useState(false);
 
-	user = JSON.parse(user);
+	useEffect(() => {
+		setLoading(true);
 
-	if (user) {
-		props.onAuth(user.username, user.password);
-	}
-	// usersData = JSON.parse(usersData);
+		props.onTryAuthLogin();
+		setLoading(false);
+	}, []);
 
-	// if (usersData) {
-	// 	usersData = usersData.map((user) => JSON.parse(user));
-	// } else {
-	// 	usersData = [];
-	// }
-
-	let authRoutes = (
-		<Switch>
-			<Route path='/login' component={Login} />
-			<Route path='/sign-up' component={SignUp} />
-			{/* <Redirect to='/login' /> */}
-		</Switch>
-	);
+	let authRoutes = null;
 
 	if (props.isAuthenticated) {
+		console.log('it is authenticated');
 		authRoutes = (
 			<Switch>
-				<Route exact path='/home' component={Home} />
+				<Route exact path={('/', '/home')} component={Home} />
 				<Route path='/profile' component={Profile} />
 				<Route path='/logout' component={Logout} />
-				{/* <Redirect to='/home' /> */}
+				<Redirect from='/login' to='/home' />
+				<Redirect exact from='/*' to='/home' />
+			</Switch>
+		);
+	} else {
+		console.log('it is not authenticated');
+		authRoutes = (
+			<Switch>
+				<Route exact path={['/', '/login']} component={Login} />
+				<Route path='/sign-up' component={SignUp} />
+				{/* <Redirect from='/' to='/' /> */}
 			</Switch>
 		);
 	}
 
-	// props.getUserInfo(user);
-
-	return (
-		<div>
-			<HeaderBar />
-			{authRoutes}
-		</div>
-	);
+	if (loading) {
+		console.log('goes to here');
+		return <div>loading</div>;
+	} else {
+		return (
+			<div>
+				<HeaderBar />
+				{authRoutes}
+			</div>
+		);
+	}
 }
 const mapStateToProps = (state) => {
 	return {
 		isAuthenticated: state.username !== null,
+		loading: state.loading,
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onAuth: (username, password) => dispatch(actions.auth(username, password)),
+		onTryAuthLogin: () => dispatch(actions.authCheckState()),
 	};
 };
 

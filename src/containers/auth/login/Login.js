@@ -37,6 +37,8 @@ const Login = (props) => {
 		},
 	});
 
+	const [loading, setLoading] = useState(false);
+
 	const checkValidity = (value, rules) => {
 		let isValid = true;
 
@@ -70,11 +72,17 @@ const Login = (props) => {
 	const handleLogin = (event) => {
 		event.preventDefault();
 
+		// setLoading(true);
 		props.onAuth(
 			loginFormControls.username.value,
 			loginFormControls.password.value,
 		);
-		props.history.push('/home');
+		// setLoading(false);
+		if (props.isAuthenticated) {
+			props.history.push('/home');
+		} else {
+			// props.history.push('/login');
+		}
 	};
 
 	const formElements = [];
@@ -86,7 +94,7 @@ const Login = (props) => {
 		});
 	}
 
-	const form = formElements.map((formElement) => (
+	let form = formElements.map((formElement) => (
 		<FormControl
 			fullWidth
 			key={formElement.id}
@@ -104,6 +112,10 @@ const Login = (props) => {
 
 	let alertComponent = null;
 
+	if (props.loading) {
+		form = <div>loading</div>;
+	}
+
 	if (props.error) {
 		alertComponent = <AlertMessage severity='error' message={props.error} />;
 	}
@@ -111,6 +123,7 @@ const Login = (props) => {
 	let authRedirect = null;
 
 	if (props.isAuthenticated) {
+		console.log('it is authenit');
 		authRedirect = <Redirect to='/home' />;
 	}
 
@@ -146,6 +159,7 @@ const mapStateToProps = (state) => {
 	return {
 		error: state.error,
 		isAuthenticated: state.username !== null,
+		loading: state.loading,
 	};
 };
 
