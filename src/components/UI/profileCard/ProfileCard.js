@@ -119,6 +119,11 @@ const ProfileCard = (props) => {
 			isValid = value.trim() !== '' && isValid;
 		}
 
+		if (rules.isEmail) {
+			const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+			isValid = pattern.test(value) && isValid;
+		}
+
 		return isValid;
 	};
 
@@ -236,7 +241,16 @@ const ProfileCard = (props) => {
 					size='small'
 					color='primary'
 					variant='outlined'
-					onClick={handleEdit}>
+					onClick={handleEdit}
+					disabled={
+						isEditMode &&
+						((profileFromControls.email.touched &&
+							!profileFromControls.email.valid) ||
+							(profileFromControls.username.touched &&
+								!profileFromControls.username.valid) ||
+							(profileFromControls.password.touched &&
+								!profileFromControls.password.valid))
+					}>
 					{isEditMode ? 'Save' : 'Edit'}
 				</Button>
 				{loading ? <CircularProgress /> : null}
