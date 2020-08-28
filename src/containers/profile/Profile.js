@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Grid, Typography } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -6,9 +6,13 @@ import axios from 'axios';
 
 import ProfileCard from '../../components/UI/profileCard/ProfileCard';
 import ImageCard from '../../components/UI/imageCard/ImageCard';
+import AlertMessage from '../../components/UI/alert/AlertMessage';
 import * as actions from '../../store/actions/auth';
 
 const Profile = (props) => {
+	const [alertSeverity, setAlertSeverity] = useState('');
+	const [alertMessage, setAlertMessage] = useState('');
+
 	const handleDeletePhoto = async (photoUrl) => {
 		try {
 			const { data } = await axios({
@@ -26,12 +30,11 @@ const Profile = (props) => {
 		} catch (err) {
 			console.log('there is an error to delete the photo: ', err);
 		}
+	};
 
-		// const gallery = [...props.gallery];
-
-		// const updateUpdateGllery = gallery.filter((imgUrl) => imgUrl !== photoUrl);
-
-		// props.deletePhotoSuccess(updateUpdateGllery);
+	const handleShowAlert = (severity, message) => {
+		setAlertSeverity(severity);
+		setAlertMessage(message);
 	};
 
 	let gallerySection = (
@@ -54,11 +57,20 @@ const Profile = (props) => {
 		));
 	}
 
+	let alertComponent = null;
+
+	if (alertMessage) {
+		alertComponent = (
+			<AlertMessage severity={alertSeverity} message={alertMessage} />
+		);
+	}
+
 	return (
 		<Container fixed>
+			{alertComponent}
 			<Grid container spacing={3}>
 				<Grid item xs={12} sm={4} md={4}>
-					<ProfileCard props={props} />
+					<ProfileCard props={props} handleShowAlert={handleShowAlert} />
 				</Grid>
 				<Grid item xs={12} sm={8} md={8}>
 					<Grid container spacing={2}>

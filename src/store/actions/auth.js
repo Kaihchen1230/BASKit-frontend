@@ -83,6 +83,13 @@ export const updateUserStart = () => {
 };
 
 export const updateUserSuccess = (username, password, email) => {
+	let user = localStorage.getItem('user');
+	user = JSON.parse(user);
+	user.username = username;
+	user.email = email;
+	user.pasword = password;
+	localStorage.setItem('user', JSON.stringify(user));
+
 	return {
 		type: actionTypes.UPDATE_USER_SUCCESS,
 		newUsername: username,
