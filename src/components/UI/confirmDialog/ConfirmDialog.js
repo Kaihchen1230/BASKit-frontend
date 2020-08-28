@@ -6,11 +6,10 @@ import {
 	DialogContentText,
 	DialogActions,
 	Button,
-	CircularProgress,
 } from '@material-ui/core';
 
 import Input from '../input/Input';
-import AlertMessage from '../alert/AlertMessage';
+import './ConfirmDialog.css';
 
 const ConfirmDialog = (props) => {
 	const [confirmFormControl, setConfirmFormControl] = useState({
@@ -65,7 +64,6 @@ const ConfirmDialog = (props) => {
 			value={confirmFormControl.password.value}
 			invalid={!confirmFormControl.password.valid}
 			touched={confirmFormControl.password.touched}
-			fullWidth={true}
 			changed={(event) => inputChangedHandler(event, 'password')}
 		/>
 	);
@@ -75,20 +73,20 @@ const ConfirmDialog = (props) => {
 			disableBackdropClick
 			open={props.open}
 			onClose={props.handleClose}
+			maxWidth='md'
 			aria-labelledby='responsive-dialog-title'>
-			{props.message && props.severity ? (
-				<AlertMessage severity={props.severity} message={props.message} />
-			) : null}
 			<DialogTitle id='responsive-dialog-title'>
 				Are You Absolutely Sure?
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText>
-					This action cannot be undone. This will permanently delete{' '}
+					This action cannot be undone. This account:{' '}
 					<b>
 						{props.username}/{props.email}
-					</b>
-					. Please type your <b>password</b> to confirm.
+					</b>{' '}
+					will be deleted permanently and{' '}
+					<b> you will be logout immediately.</b> Please type your{' '}
+					<b>password</b> to confirm.
 				</DialogContentText>
 				{confirmField}
 			</DialogContent>
@@ -107,7 +105,6 @@ const ConfirmDialog = (props) => {
 					}>
 					Confirm
 				</Button>
-				{props.message && props.severity ? <CircularProgress /> : null}
 				<Button
 					onClick={props.handleClose}
 					color='primary'

@@ -136,12 +136,6 @@ const Home = (props) => {
 					/>
 				</Grid>
 			));
-		} else {
-			imageArea = (
-				<Typography variant='p' component='p'>
-					There is no image matched with the search term, please try again ...
-				</Typography>
-			);
 		}
 	}
 

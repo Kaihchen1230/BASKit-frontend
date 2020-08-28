@@ -2,6 +2,7 @@ import React from 'react';
 import { TextField } from '@material-ui/core';
 
 const Input = (props) => {
+	console.log('this is the props in input: ', props);
 	return (
 		<TextField
 			{...props.elementConfig}
