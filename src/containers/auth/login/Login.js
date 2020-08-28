@@ -13,6 +13,7 @@ import axios from 'axios';
 import Input from '../../../components/UI/input/Input';
 import AlertMessage from '../../../components/UI/alert/AlertMessage';
 import * as actions from '../../../store/actions/auth';
+import Spinner from '../../../components/UI/spinner/Spinner';
 
 const Login = (props) => {
 	const [loginFormControls, setLoginFormControl] = useState({
@@ -146,31 +147,35 @@ const Login = (props) => {
 		authRedirect = <Redirect to='/home' />;
 	}
 
+	const loginFormSection = (
+		<form onSubmit={handleLogin}>
+			{form}
+			<Button
+				variant='contained'
+				color='primary'
+				type='submit'
+				disabled={
+					!(
+						loginFormControls.username.touched &&
+						loginFormControls.username.valid &&
+						loginFormControls.password.touched &&
+						loginFormControls.password.valid
+					)
+				}>
+				Login
+			</Button>
+
+			<Typography variant='p' component='p'>
+				Don't have an account? <Link to='/sign-up'>Sign Up Here</Link>
+			</Typography>
+		</form>
+	);
+
 	return (
 		<Container fixed>
 			{authRedirect}
 			{alertComponent}
-			<form onSubmit={handleLogin}>
-				{form}
-				<Button
-					variant='contained'
-					color='primary'
-					type='submit'
-					disabled={
-						!(
-							loginFormControls.username.touched &&
-							loginFormControls.username.valid &&
-							loginFormControls.password.touched &&
-							loginFormControls.password.valid
-						)
-					}>
-					Login
-				</Button>
-				{loading ? <CircularProgress /> : null}
-			</form>
-			<Typography variant='p' component='p'>
-				Don't have an account? <Link to='/sign-up'>Sign Up Here</Link>
-			</Typography>
+			{loading ? <Spinner /> : loginFormSection}
 		</Container>
 	);
 };

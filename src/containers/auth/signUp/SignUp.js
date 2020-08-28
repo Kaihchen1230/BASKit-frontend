@@ -11,6 +11,7 @@ import axios from 'axios';
 
 import Input from '../../../components/UI/input/Input';
 import AlertMessage from '../../../components/UI/alert/AlertMessage';
+import Spinner from '../../../components/UI/spinner/Spinner';
 
 const initialSignUpFormControls = {
 	username: {
@@ -182,34 +183,38 @@ const SignUp = (props) => {
 		);
 	}
 
-	return (
-		<Container fixed>
-			{alertComponent}
-			<form onSubmit={handleSignUp}>
-				{form}
-				<Button
-					variant='contained'
-					color='primary'
-					type='submit'
-					disabled={
-						!(
-							signUpFormControls.username.valid &&
-							signUpFormControls.username.touched &&
-							signUpFormControls.email.valid &&
-							signUpFormControls.email.touched &&
-							signUpFormControls.password.valid &&
-							signUpFormControls.password.touched &&
-							signUpFormControls.confirmPassword.valid &&
-							signUpFormControls.confirmPassword.touched
-						)
-					}>
-					Sign Up
-				</Button>
-				{loading ? <CircularProgress /> : null}
-			</form>
+	const formSection = (
+		<form onSubmit={handleSignUp}>
+			{form}
+			<Button
+				variant='contained'
+				color='primary'
+				type='submit'
+				disabled={
+					!(
+						signUpFormControls.username.valid &&
+						signUpFormControls.username.touched &&
+						signUpFormControls.email.valid &&
+						signUpFormControls.email.touched &&
+						signUpFormControls.password.valid &&
+						signUpFormControls.password.touched &&
+						signUpFormControls.confirmPassword.valid &&
+						signUpFormControls.confirmPassword.touched
+					)
+				}>
+				Sign Up
+			</Button>
+			{loading ? <CircularProgress /> : null}
 			<Typography variant='p' component='p'>
 				Already have account? <Link to='/login'>Login Here</Link>
 			</Typography>
+		</form>
+	);
+
+	return (
+		<Container fixed>
+			{alertComponent}
+			{loading ? <Spinner /> : formSection}
 		</Container>
 	);
 };

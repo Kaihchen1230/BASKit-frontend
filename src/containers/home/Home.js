@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
-import {
-	Container,
-	Grid,
-	Button,
-	Typography,
-	CircularProgress,
-} from '@material-ui/core';
+import { Container, Grid, Button } from '@material-ui/core';
 import axios from 'axios';
 import { connect } from 'react-redux';
 
 import Input from '../../components/UI/input/Input';
 import ImageCard from '../../components/UI/imageCard/ImageCard';
 import AlertMessage from '../../components/UI/alert/AlertMessage';
+import Spinner from '../../components/UI/spinner/Spinner';
 import * as actions from '../../store/actions/auth';
 
 const Home = (props) => {
@@ -184,9 +179,13 @@ const Home = (props) => {
 					</Grid>
 				</Grid>
 			</form>
-			<Grid container spacing={1}>
-				{loading ? <CircularProgress /> : imageArea}
-			</Grid>
+			{loading ? (
+				<Spinner />
+			) : (
+				<Grid container spacing={1}>
+					{imageArea}
+				</Grid>
+			)}
 		</Container>
 	);
 };

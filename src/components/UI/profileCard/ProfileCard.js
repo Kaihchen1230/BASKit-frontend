@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
 	Card,
 	CardActionArea,
@@ -8,7 +8,6 @@ import {
 	Button,
 	FormControl,
 	CircularProgress,
-	TextField,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -16,8 +15,8 @@ import axios from 'axios';
 import profileImage from '../../../images/profileImage.jpg';
 import Input from '../input/Input';
 import ConfirmDialog from '../confirmDialog/ConfirmDialog';
+import Spinner from '../spinner/Spinner';
 import * as actions from '../../../store/actions/auth';
-import { PinDropRounded } from '@material-ui/icons';
 
 const ProfileCard = (props) => {
 	const initialProfileFromControls = {
@@ -335,7 +334,9 @@ const ProfileCard = (props) => {
 				/>
 			</CardActionArea>
 
-			<CardContent style={{ paddingLeft: '40px' }}>{form}</CardContent>
+			<CardContent style={{ paddingLeft: '40px' }}>
+				{loading ? <Spinner /> : form}
+			</CardContent>
 			<CardActions style={{ justifyContent: 'space-around' }}>
 				<Button
 					size='small'
@@ -353,7 +354,7 @@ const ProfileCard = (props) => {
 					}>
 					{isEditMode ? 'Save' : 'Edit'}
 				</Button>
-				{loading ? <CircularProgress /> : null}
+
 				<Button
 					size='small'
 					color='secondary'
@@ -362,6 +363,7 @@ const ProfileCard = (props) => {
 					{isEditMode ? 'Cancel' : 'Delete'}
 				</Button>
 			</CardActions>
+
 			<ConfirmDialog
 				open={open}
 				handleClose={handleClickClose}
