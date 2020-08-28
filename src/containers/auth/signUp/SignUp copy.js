@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Container, FormControl, Button, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
-import Input from '../../components/UI/input/Input';
+import Input from '../../../components/UI/input/Input';
+import AlertMessage from '../../../components/UI/alert/AlertMessage';
 
 const SignUp = (props) => {
 	const [signUpFormControls, setSignUpFormControls] = useState({
@@ -64,6 +66,9 @@ const SignUp = (props) => {
 		},
 	});
 
+	const [alertSeverity, setAlertSeverity] = useState('');
+	const [alertMessage, setAlertMessage] = useState('');
+
 	const checkValidity = (value, rules) => {
 		let isValid = true;
 
@@ -92,7 +97,7 @@ const SignUp = (props) => {
 
 	const inputChangedHandler = (event, controlName) => {
 		event.persist();
-		console.log('this is vent.target.value: ', event.target.value);
+		// console.log('this is vent.target.value: ', event.target.value);
 		setSignUpFormControls((prevState) => ({
 			...prevState,
 			[controlName]: {
@@ -109,8 +114,35 @@ const SignUp = (props) => {
 
 	const handleSignUp = (event) => {
 		event.preventDefault();
-		props.history.push('/login');
-		alert('sign up clicked');
+
+		// let localStorageUsersData = localStorage.getItem('usersData');
+		// localStorageUsersData = JSON.parse(localStorageUsersData);
+
+		// let userExist = null;
+
+		// if (localStorageUsersData) {
+		// 	userExist = localStorageUsersData.find(
+		// 		(user) => user.username === signUpFormControls.username.value,
+		// 	);
+		// } else {
+		// 	localStorageUsersData = [];
+		// }
+		// console.log('this is userExist: ', userExist);
+
+		// if (userExist) {
+		// 	setAlertSeverity('error');
+		// 	setAlertMessage('User With This User/Email Already Exist');
+		// } else {
+		// 	const newUser = {
+		// 		username: signUpFormControls.username.value,
+		// 		email: signUpFormControls.email.value,
+		// 		password: signUpFormControls.password.value,
+		// 		gallery: [],
+		// 	};
+		// 	localStorageUsersData.push(newUser);
+		// 	props.history.push('/login');
+		// }
+		// localStorage.setItem('usersData', JSON.stringify(localStorageUsersData));
 	};
 
 	const formElements = [];
@@ -137,8 +169,17 @@ const SignUp = (props) => {
 		</FormControl>
 	));
 
+	let alertComponent = null;
+
+	if (alertMessage) {
+		alertComponent = (
+			<AlertMessage severity={alertSeverity} message={alertMessage} />
+		);
+	}
+
 	return (
 		<Container fixed>
+			{alertComponent}
 			<form onSubmit={handleSignUp}>
 				{form}
 				<Button

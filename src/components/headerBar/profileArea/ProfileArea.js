@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
 	IconButton,
@@ -10,7 +10,7 @@ import {
 	MenuItem,
 	Link,
 } from '@material-ui/core';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import { AccountCircle } from '@material-ui/icons';
 
 const ProfileArea = (props) => {
 	const [open, setOpen] = React.useState(false);
@@ -83,7 +83,15 @@ const ProfileArea = (props) => {
 											My Profile
 										</Link>
 									</MenuItem>
-									<MenuItem onClick={handleClose}>Logout</MenuItem>
+									<MenuItem onClick={handleClose}>
+										<Link
+											component={RouterLink}
+											to='/logout'
+											underline='none'
+											color='textPrimary'>
+											Logout
+										</Link>
+									</MenuItem>
 								</MenuList>
 							</ClickAwayListener>
 						</Paper>

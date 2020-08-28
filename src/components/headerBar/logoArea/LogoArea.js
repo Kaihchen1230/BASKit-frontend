@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-import logo from '../../../baskitLogo.jpeg';
+import logo from '../../../images/baskitLogo.jpeg';
 
-const LogoArea = () => {
+const LogoArea = (props) => {
 	return (
 		<div style={{ flexGrow: 1 }}>
-			<Link to='/'>
+			<Link to={props.isAuthenticated ? '/home' : '/login'}>
 				<img
 					src={logo}
 					alt='Baskit Logo'
@@ -20,4 +21,10 @@ const LogoArea = () => {
 	);
 };
 
-export default LogoArea;
+const mapStateToProps = (state) => {
+	return {
+		isAuthenticated: state.username !== null,
+	};
+};
+
+export default connect(mapStateToProps)(LogoArea);

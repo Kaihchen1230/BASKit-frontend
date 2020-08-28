@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
-import { Container, FormControl, Button, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import {
+	Container,
+	FormControl,
+	Button,
+	Typography,
+	CircularProgress,
+} from '@material-ui/core';
+import { Link, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import axios from 'axios';
 
-import Input from '../../components/UI/input/Input';
+import Input from '../../../components/UI/input/Input';
+import AlertMessage from '../../../components/UI/alert/AlertMessage';
+import * as actions from '../../../store/actions/auth';
 
 const Login = (props) => {
 	const [loginFormControls, setLoginFormControl] = useState({
@@ -34,6 +44,8 @@ const Login = (props) => {
 		},
 	});
 
+	const [loading, setLoading] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
 	const checkValidity = (value, rules) => {
 		let isValid = true;
 
@@ -64,9 +76,36 @@ const Login = (props) => {
 		}));
 	};
 
-	const handleLogin = (event) => {
+	const handleLogin = async (event) => {
 		event.preventDefault();
-		props.history.push('/home');
+
+		setLoading(true);
+
+		try {
+			const { data } = await axios({
+				method: 'POST',
+				url: 'http://localhost:5000/login',
+				data: {
+					username: loginFormControls.username.value,
+					password: loginFormControls.password.value,
+				},
+			});
+
+			const user = {
+				username: data.data.username,
+				password: data.data.password,
+				email: data.data.email,
+				gallery: data.data.gallery,
+			};
+			props.authSuccess(user.username, user.email, user.password, user.gallery);
+
+			localStorage.setItem('user', JSON.stringify(user));
+		} catch (err) {
+			console.log('eror in loginjs: ', err.response.data.message);
+			setAlertMessage(err.response.data.message);
+		}
+
+		setLoading(false);
 	};
 
 	const formElements = [];
@@ -78,7 +117,7 @@ const Login = (props) => {
 		});
 	}
 
-	const form = formElements.map((formElement) => (
+	let form = formElements.map((formElement) => (
 		<FormControl
 			fullWidth
 			key={formElement.id}
@@ -93,8 +132,24 @@ const Login = (props) => {
 			/>
 		</FormControl>
 	));
+
+	let alertComponent = null;
+
+	if (alertMessage) {
+		alertComponent = <AlertMessage severity='error' message={alertMessage} />;
+	}
+
+	let authRedirect = null;
+
+	if (props.isAuthenticated) {
+		console.log('it is authenit');
+		authRedirect = <Redirect to='/home' />;
+	}
+
 	return (
 		<Container fixed>
+			{authRedirect}
+			{alertComponent}
 			<form onSubmit={handleLogin}>
 				{form}
 				<Button
@@ -111,6 +166,7 @@ const Login = (props) => {
 					}>
 					Login
 				</Button>
+				{loading ? <CircularProgress /> : null}
 			</form>
 			<Typography variant='p' component='p'>
 				Don't have an account? <Link to='/sign-up'>Sign Up Here</Link>
@@ -119,4 +175,19 @@ const Login = (props) => {
 	);
 };
 
-export default Login;
+const mapStateToProps = (state) => {
+	return {
+		error: state.error,
+		isAuthenticated: state.username !== null,
+		loading: state.loading,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		authSuccess: (username, email, password, gallery) =>
+			dispatch(actions.authSuccess(username, email, password, gallery)),
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
