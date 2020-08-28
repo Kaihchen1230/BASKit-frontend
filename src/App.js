@@ -39,7 +39,7 @@ function App(props) {
 			<Switch>
 				<Route exact path={['/', '/login']} component={Login} />
 				<Route path='/sign-up' component={SignUp} />
-				{/* <Redirect from='/' to='/' /> */}
+				{/* <Redirect from='/' to='/login' /> */}
 			</Switch>
 		);
 	}

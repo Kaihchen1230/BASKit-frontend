@@ -115,34 +115,34 @@ const SignUp = (props) => {
 	const handleSignUp = (event) => {
 		event.preventDefault();
 
-		let localStorageUsersData = localStorage.getItem('usersData');
-		localStorageUsersData = JSON.parse(localStorageUsersData);
+		// let localStorageUsersData = localStorage.getItem('usersData');
+		// localStorageUsersData = JSON.parse(localStorageUsersData);
 
-		let userExist = null;
+		// let userExist = null;
 
-		if (localStorageUsersData) {
-			userExist = localStorageUsersData.find(
-				(user) => user.username === signUpFormControls.username.value,
-			);
-		} else {
-			localStorageUsersData = [];
-		}
-		console.log('this is userExist: ', userExist);
+		// if (localStorageUsersData) {
+		// 	userExist = localStorageUsersData.find(
+		// 		(user) => user.username === signUpFormControls.username.value,
+		// 	);
+		// } else {
+		// 	localStorageUsersData = [];
+		// }
+		// console.log('this is userExist: ', userExist);
 
-		if (userExist) {
-			setAlertSeverity('error');
-			setAlertMessage('User With This User/Email Already Exist');
-		} else {
-			const newUser = {
-				username: signUpFormControls.username.value,
-				email: signUpFormControls.email.value,
-				password: signUpFormControls.password.value,
-				gallery: [],
-			};
-			localStorageUsersData.push(newUser);
-			props.history.push('/login');
-		}
-		localStorage.setItem('usersData', JSON.stringify(localStorageUsersData));
+		// if (userExist) {
+		// 	setAlertSeverity('error');
+		// 	setAlertMessage('User With This User/Email Already Exist');
+		// } else {
+		// 	const newUser = {
+		// 		username: signUpFormControls.username.value,
+		// 		email: signUpFormControls.email.value,
+		// 		password: signUpFormControls.password.value,
+		// 		gallery: [],
+		// 	};
+		// 	localStorageUsersData.push(newUser);
+		// 	props.history.push('/login');
+		// }
+		// localStorage.setItem('usersData', JSON.stringify(localStorageUsersData));
 	};
 
 	const formElements = [];

@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { Container, Grid, Button, Typography } from '@material-ui/core';
+import {
+	Container,
+	Grid,
+	Button,
+	Typography,
+	CircularProgress,
+} from '@material-ui/core';
 import axios from 'axios';
 import { connect } from 'react-redux';
 
 import Input from '../../components/UI/input/Input';
 import ImageCard from '../../components/UI/imageCard/ImageCard';
+import AlertMessage from '../../components/UI/alert/AlertMessage';
 import * as actions from '../../store/actions/auth';
 
 const Home = (props) => {
@@ -25,8 +32,11 @@ const Home = (props) => {
 		},
 	});
 
+	const [loading, setLoading] = useState(false);
 	const [searchButtonClicked, setSearchButtonClicked] = useState(false);
 	const [searchResults, setSearchResults] = useState([]);
+	const [alertSeverity, setAlertSeverity] = useState('');
+	const [alertMessage, setAlertMessage] = useState('');
 
 	const checkValidity = (value, rules) => {
 		let isValid = true;
@@ -61,41 +71,66 @@ const Home = (props) => {
 	const handleSearch = async (event) => {
 		event.preventDefault();
 
-		const API = '563492ad6f91700001000001ebd7d3cccfca49aaac590541ade3b46b';
-		const url = `https://api.pexels.com/v1/search?`;
-
 		setSearchButtonClicked(true);
+		setLoading(true);
 		try {
-			const { data } = await axios.get(url, {
-				headers: {
-					Authorization: API,
-				},
-				params: {
-					query: searchFormControl.searchField.value,
-					per_page: '6',
+			const { data } = await axios({
+				method: 'POST',
+				url: 'http://localhost:5000/search-photo',
+				data: {
+					username: props.username,
+					password: props.password,
+					searchTerm: searchFormControl.searchField.value,
 				},
 			});
 
-			const imageUrls = data.photos.map((imgUrl) => imgUrl.src.medium);
-			console.log('imageUrls: ', imageUrls);
-			setSearchResults(imageUrls);
+			console.log('this is data in search : ', data.photos);
+			setAlertSeverity('');
+			setAlertMessage('');
+
+			setSearchResults(data.photos);
 		} catch (err) {
-			console.log('there is an error: ', err);
+			console.log('there is an error in search: ', err.response.data.message);
+			setAlertSeverity('error');
+			setAlertMessage(err.response.data.message);
+			setSearchResults([]);
 		}
+		setLoading(false);
 	};
 
-	const handleAddPhoto = (photoUrl) => {
-		props.onAddPhoto(props.username, photoUrl);
+	const handleAddPhoto = async (photoUrl) => {
+		// setLoading(true);
+		try {
+			const { data } = await axios({
+				method: 'POST',
+				url: 'http://localhost:5000/save-photo',
+				data: {
+					username: props.username,
+					password: props.password,
+					photoUrl: photoUrl,
+				},
+			});
+			setAlertMessage();
+			// console.log('this is the data: ', data);
+			setAlertMessage(data.message);
+			setAlertSeverity('success');
+			props.addPhotoSuccess(photoUrl);
+		} catch (err) {
+			console.log('there is an error to add to photo:  ', err);
+			setAlertMessage(err.response.data.message);
+			setAlertSeverity('error');
+		}
+		// setLoading(false);
 	};
 
 	let imageArea = null;
 
 	if (searchButtonClicked) {
 		if (searchResults.length > 0) {
-			imageArea = searchResults.map((imgUrl) => (
-				<Grid key={imgUrl} item xs={12} sm={4} md={4} lg={4}>
+			imageArea = searchResults.map((photoUrl) => (
+				<Grid key={photoUrl} item xs={12} sm={4} md={4} lg={4}>
 					<ImageCard
-						imgUrl={imgUrl}
+						photoUrl={photoUrl}
 						buttonName='Add'
 						handleClick={handleAddPhoto}
 					/>
@@ -121,8 +156,17 @@ const Home = (props) => {
 		/>
 	);
 
+	let alertComponent = null;
+
+	if (alertMessage) {
+		alertComponent = (
+			<AlertMessage severity={alertSeverity} message={alertMessage} />
+		);
+	}
+
 	return (
 		<Container fixed>
+			{alertComponent}
 			<form onSubmit={handleSearch}>
 				<Grid container spacing={1}>
 					<Grid item xs={12} sm={11} md={11} lg={11}>
@@ -147,7 +191,7 @@ const Home = (props) => {
 				</Grid>
 			</form>
 			<Grid container spacing={1}>
-				{imageArea}
+				{loading ? <CircularProgress /> : imageArea}
 			</Grid>
 		</Container>
 	);
@@ -156,13 +200,16 @@ const Home = (props) => {
 const mapStateToProps = (state) => {
 	return {
 		username: state.username,
+		password: state.password,
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onAddPhoto: (username, photoUrl) =>
-			dispatch(actions.addPhoto(username, photoUrl)),
+		onAddPhoto: (username, password, photoInfo) =>
+			dispatch(actions.addPhoto(username, password, photoInfo)),
+
+		addPhotoSuccess: (photoUrl) => dispatch(actions.addPhotoSuccess(photoUrl)),
 	};
 };
 

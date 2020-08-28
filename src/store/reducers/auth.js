@@ -1,5 +1,4 @@
 import * as actionTypes from '../actions/actionTypes';
-import { LocalHospital } from '@material-ui/icons';
 
 const initialState = {
 	username: null,
@@ -30,13 +29,6 @@ const reducer = (state = initialState, action) => {
 				loading: false,
 			};
 
-		case actionTypes.AUTH_FAIL:
-			return {
-				...state,
-				error: action.error,
-				loading: false,
-			};
-
 		case actionTypes.AUTH_LOGOUT:
 			localStorage.removeItem('user');
 			return {
@@ -45,13 +37,6 @@ const reducer = (state = initialState, action) => {
 				password: null,
 				gallery: [],
 				email: null,
-			};
-
-		case actionTypes.UPDATE_USER_START:
-			return {
-				...state,
-				error: null,
-				loading: true,
 			};
 
 		case actionTypes.UPDATE_USER_SUCCESS:
@@ -64,27 +49,16 @@ const reducer = (state = initialState, action) => {
 				loading: false,
 			};
 
-		case actionTypes.UPDATE_USER_FAIL:
-			return {
-				...state,
-				error: action.error,
-				loading: false,
-			};
-
 		case actionTypes.ADD_PHOTO_SUCCESS:
 			return {
 				...state,
-				gallery: state.gallery.concat(action.imgUrl),
+				gallery: state.gallery.concat(action.photoUrl),
 			};
 
 		case actionTypes.DELETE_PHOTO_SUCCESS:
-			const updateGallery = state.gallery.filter(
-				(photoUrl) => photoUrl !== action.imgUrl,
-			);
-			console.log('this is updateGallery: ', updateGallery);
 			return {
 				...state,
-				gallery: updateGallery,
+				gallery: action.updatedGallery,
 			};
 
 		default:

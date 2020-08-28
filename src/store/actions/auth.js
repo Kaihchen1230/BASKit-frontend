@@ -1,4 +1,5 @@
 import * as actionTypes from './actionTypes';
+import axios from 'axios';
 
 export const authStart = () => {
 	return {
@@ -16,13 +17,6 @@ export const authSuccess = (username, email, password, gallery) => {
 	};
 };
 
-export const authFail = (error) => {
-	return {
-		type: actionTypes.AUTH_FAIL,
-		error: error,
-	};
-};
-
 const localStorageSearch = () => {
 	let localStorageUsersData = localStorage.getItem('usersData');
 	localStorageUsersData = JSON.parse(localStorageUsersData);
@@ -31,32 +25,32 @@ const localStorageSearch = () => {
 };
 
 export const auth = (username, password) => {
-	return (dispatch) => {
+	return async (dispatch) => {
 		dispatch(authStart());
 
-		const usersData = localStorageSearch();
-		let userExist = null;
-
-		if (usersData) {
-			userExist = usersData.find(
-				(user) => user.username === username && user.password === password,
-			);
-		}
-
-		if (!userExist) {
-			// console.log('there is no userExisted');
-			dispatch(authFail('You Have Entered Invalid Username and/or Password'));
-		} else {
-			// console.log(`${username} existed and this is userExist: `, userExist);
+		try {
+			const { data } = await axios({
+				method: 'POST',
+				url: 'http://localhost:5000/login',
+				data: {
+					username: username,
+					password: password,
+				},
+			});
+			console.log('this is data in auth success: ', data);
 			dispatch(
-				authSuccess(
-					userExist.username,
-					userExist.email,
-					userExist.password,
-					userExist.gallery,
-				),
+				authSuccess(data.username, data.email, data.password, data.gallery),
 			);
-			localStorage.setItem('user', JSON.stringify(userExist));
+			const user = {
+				username: data.username,
+				password: data.password,
+				email: data.email,
+				gallery: data.gallery,
+			};
+			localStorage.setItem('user', JSON.stringify(user));
+		} catch (err) {
+			console.log('eror in login: ', err.response.data.message);
+			// dispatch(authFail(err.response.data.message));
 		}
 	};
 };
@@ -91,9 +85,9 @@ export const updateUserStart = () => {
 export const updateUserSuccess = (username, password, email) => {
 	return {
 		type: actionTypes.UPDATE_USER_SUCCESS,
-		username: username,
-		password: password,
-		email: email,
+		newUsername: username,
+		newPassword: password,
+		newEmail: email,
 	};
 };
 
@@ -165,7 +159,7 @@ export const updateUser = (
 
 		if (!userExist) {
 			// console.log('there is no userExisted');
-			dispatch(authFail('You Have Entered Invalid Username and/or Password'));
+			// dispatch(authFail('You Have Entered Invalid Username and/or Password'));
 		} else {
 			// console.log(`${username} existed and this is userExist: `, userExist);
 			dispatch(
@@ -182,20 +176,9 @@ export const deleteUserStart = () => {
 	};
 };
 
-export const deleteUser = (username, password, email) => {
+export const deleteUser = () => {
 	return (dispatch) => {
-		dispatch(deleteUserStart);
-
-		const usersData = localStorageSearch();
-		let updateUsersData = [];
-		if (usersData) {
-			updateUsersData = usersData.filter(
-				(user) => user.username === username && user.email === password,
-			);
-
-			localStorage.setItem('usersData', JSON.stringify(updateUsersData));
-			dispatch(logout());
-		}
+		dispatch(logout());
 	};
 };
 
@@ -205,75 +188,35 @@ export const addPhotoStart = () => {
 	};
 };
 
-export const addPhotoSuccess = (username, imgUrl) => {
-	const usersData = localStorageSearch();
-
-	console.log('this is username: ', username);
-	const updateUsersData = usersData.map((user) => {
-		if (user.username === username) {
-			user.gallery = user.gallery.concat(imgUrl);
-			console.log('this is user: ', user);
-		}
-		return user;
-	});
-
-	console.log('this is updateUsersData: ', updateUsersData);
-	localStorage.setItem('usersData', JSON.stringify(updateUsersData));
-
+export const addPhotoSuccess = (photoUrl) => {
 	let user = localStorage.getItem('user');
 	user = JSON.parse(user);
-	user.gallery = user.gallery.concat(imgUrl);
+	user.gallery = user.gallery.concat(photoUrl);
 	localStorage.setItem('user', JSON.stringify(user));
 
 	return {
 		type: actionTypes.ADD_PHOTO_SUCCESS,
-		imgUrl: imgUrl,
+		photoUrl: photoUrl,
 	};
 };
 
 export const addPhoto = (username, imgUrl) => {
 	return (dispatch) => {
 		// dispatch(addPhotoStart);
-
 		//  api call here
-
-		dispatch(addPhotoSuccess(username, imgUrl));
+		// dispatch(addPhotoSuccess(username, imgUrl));
 	};
 };
 
-export const deletePhotoSuccess = (username, imgUrl) => {
-	const usersData = localStorageSearch();
-
-	console.log(
-		'this is username in delete: ',
-		username,
-		' this is img: ',
-		imgUrl,
-	);
-
-	const updateUsersData = usersData.map((user) => {
-		if (user.username === username) {
-			const updateGallery = user.gallery.filter(
-				(photoUrl) => photoUrl !== imgUrl,
-			);
-			user.gallery = updateGallery;
-		}
-		return user;
-	});
-
-	console.log('this is updateUsersData in deletE: ', updateUsersData);
-
-	localStorage.setItem('usersData', JSON.stringify(updateUsersData));
-
+export const deletePhotoSuccess = (updatedGallery) => {
 	let user = localStorage.getItem('user');
 	user = JSON.parse(user);
-	const updateGallery = user.gallery.filter((photoUrl) => photoUrl !== imgUrl);
-	user.gallery = updateGallery;
+	user.gallery = updatedGallery;
 	localStorage.setItem('user', JSON.stringify(user));
 
 	return {
 		type: actionTypes.DELETE_PHOTO_SUCCESS,
-		imgUrl: imgUrl,
+		updatedGallery: updatedGallery,
 	};
 };
 

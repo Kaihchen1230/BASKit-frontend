@@ -13,7 +13,7 @@ const ImageCard = (props) => {
 	return (
 		<Card style={{ height: '100%' }}>
 			<CardActionArea>
-				<CardMedia component='img' image={props.imgUrl} />
+				<CardMedia component='img' image={props.photoUrl} />
 			</CardActionArea>
 			<CardActions
 				style={{
@@ -25,7 +25,7 @@ const ImageCard = (props) => {
 					size='small'
 					variant='contained'
 					color='primary'
-					onClick={() => props.handleClick(props.imgUrl)}>
+					onClick={() => props.handleClick(props.photoUrl)}>
 					{props.buttonName}
 				</Button>
 			</CardActions>

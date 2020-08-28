@@ -7,8 +7,10 @@ import {
 	CardMedia,
 	Button,
 	FormControl,
+	CircularProgress,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 import profileImage from '../../../images/profileImage.jpg';
 import Input from '../input/Input';
@@ -62,6 +64,9 @@ const ProfileCard = (props) => {
 		},
 	});
 
+	const [loading, setLoading] = useState(false);
+	const [alertSeverity, setAlertSeverity] = useState('');
+	const [alertMessage, setAlertMessage] = useState('');
 	const [open, setOpen] = useState(false);
 
 	const handleClickOpen = () => {
@@ -72,10 +77,31 @@ const ProfileCard = (props) => {
 		setOpen(false);
 	};
 
-	const handleDelete = () => {
+	const handleDelete = async () => {
 		console.log('delete press and this is props: ', props);
-		props.onDeleteUser(props.username, props.password, props.email);
-		props.props.history.push('/login');
+
+		setLoading(true);
+		try {
+			const { data } = await axios({
+				method: 'POST',
+				url: 'http://localhost:5000/delete-account',
+				data: {
+					username: props.username,
+					password: props.password,
+				},
+			});
+
+			console.log('this is the data after delete: ', data);
+			setAlertSeverity('success');
+			setAlertMessage(data.message);
+			props.deleteUser();
+			props.props.history.push('/login');
+		} catch (err) {
+			console.log('there is an error to delete to account: ', err);
+			setAlertSeverity('error');
+			setAlertMessage(err.response.data.message);
+		}
+		setLoading(false);
 	};
 
 	const checkValidity = (value, rules) => {
@@ -133,20 +159,37 @@ const ProfileCard = (props) => {
 		setProfileFormControls(updateProfileFormControls);
 	};
 
-	const handleEdit = () => {
+	const handleEdit = async () => {
 		updateEditModeForProfileForm(isEditMode);
 		if (isEditMode) {
 			setIsEditMode(false);
 
-			props.onUpdateUser(
-				props.username,
-				props.password,
-				props.email,
-				profileFromControls.username.value,
-				profileFromControls.password.value,
-				profileFromControls.email.value,
-				props.gallery,
-			);
+			setLoading(true);
+
+			try {
+				const { data } = await axios({
+					method: 'POST',
+					url: 'http://localhost:5000/update-account',
+					data: {
+						oldUsername: props.username,
+						oldPassword: props.password,
+						oldEmail: props.email,
+						newUsername: profileFromControls.username.value,
+						newPassword: profileFromControls.password.value,
+						newEmail: profileFromControls.email.value,
+					},
+				});
+				console.log('this is the data from update: ', data.updatedAccount);
+				const updatedAccount = data.updatedAccount;
+				props.updateUserSuccess(
+					updatedAccount.username,
+					updatedAccount.password,
+					updatedAccount.email,
+				);
+			} catch (err) {
+				console.log('there is an error to update the account: ', err);
+			}
+			setLoading(false);
 		} else {
 			setIsEditMode(true);
 		}
@@ -196,6 +239,7 @@ const ProfileCard = (props) => {
 					onClick={handleEdit}>
 					{isEditMode ? 'Save' : 'Edit'}
 				</Button>
+				{loading ? <CircularProgress /> : null}
 				<Button
 					size='small'
 					color='secondary'
@@ -210,6 +254,8 @@ const ProfileCard = (props) => {
 				handleDelete={handleDelete}
 				password={profileFromControls.password.value}
 				props={props}
+				severity={alertSeverity}
+				message={alertMessage}
 			/>
 		</Card>
 	);
@@ -226,26 +272,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onUpdateUser: (
-			oldUsername,
-			oldPassword,
-			oldEmail,
-			newUsername,
-			newPassword,
-			newEmail,
-		) =>
-			dispatch(
-				actions.updateUser(
-					oldUsername,
-					oldPassword,
-					oldEmail,
-					newUsername,
-					newPassword,
-					newEmail,
-				),
-			),
-		onDeleteUser: (username, password, email) =>
-			dispatch(actions.deleteUser(username, password, email)),
+		updateUserSuccess: (newUsername, newPassword, newEmail) =>
+			dispatch(actions.updateUserSuccess(newUsername, newPassword, newEmail)),
+
+		deleteUser: () => dispatch(actions.deleteUser()),
 	};
 };
 

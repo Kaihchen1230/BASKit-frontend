@@ -1,71 +1,82 @@
 import React, { useState } from 'react';
-import { Container, FormControl, Button, Typography } from '@material-ui/core';
+import {
+	Container,
+	FormControl,
+	Button,
+	Typography,
+	CircularProgress,
+} from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 import Input from '../../../components/UI/input/Input';
 import AlertMessage from '../../../components/UI/alert/AlertMessage';
 
+const initialSignUpFormControls = {
+	username: {
+		elementConfig: {
+			label: 'Username',
+			type: 'text',
+			helperText: '',
+		},
+		value: '',
+		validation: {
+			required: true,
+		},
+		valid: false,
+		touched: false,
+	},
+	email: {
+		elementConfig: {
+			label: 'Email',
+			type: 'email',
+			helperText: '',
+		},
+		value: '',
+		validation: {
+			required: true,
+			isEmail: true,
+		},
+		valid: false,
+		touched: false,
+	},
+	password: {
+		elementConfig: {
+			label: 'Password',
+			type: 'password',
+			helperText: 'Password has to be at least 8 characters long',
+		},
+		value: '',
+		validation: {
+			required: true,
+			minLength: 8,
+		},
+		valid: false,
+		touched: false,
+	},
+	confirmPassword: {
+		elementConfig: {
+			label: 'Confirm Password',
+			type: 'password',
+			helperText: 'Password has to be matched',
+		},
+		value: '',
+		validation: {
+			required: true,
+			minLength: 8,
+			passwordMatched: true,
+		},
+		valid: false,
+		touched: false,
+	},
+};
+
 const SignUp = (props) => {
 	const [signUpFormControls, setSignUpFormControls] = useState({
-		username: {
-			elementConfig: {
-				label: 'Username',
-				type: 'text',
-				helperText: '',
-			},
-			value: '',
-			validation: {
-				required: true,
-			},
-			valid: false,
-			touched: false,
-		},
-		email: {
-			elementConfig: {
-				label: 'Email',
-				type: 'email',
-				helperText: '',
-			},
-			value: '',
-			validation: {
-				required: true,
-				isEmail: true,
-			},
-			valid: false,
-			touched: false,
-		},
-		password: {
-			elementConfig: {
-				label: 'Password',
-				type: 'password',
-				helperText: 'Password has to be at least 8 characters long',
-			},
-			value: '',
-			validation: {
-				required: true,
-				minLength: 8,
-			},
-			valid: false,
-			touched: false,
-		},
-		confirmPassword: {
-			elementConfig: {
-				label: 'Confirm Password',
-				type: 'password',
-				helperText: 'Password has to be matched',
-			},
-			value: '',
-			validation: {
-				required: true,
-				minLength: 8,
-				passwordMatched: true,
-			},
-			valid: false,
-			touched: false,
-		},
+		...initialSignUpFormControls,
 	});
 
+	const [loading, setLoading] = useState(false);
 	const [alertSeverity, setAlertSeverity] = useState('');
 	const [alertMessage, setAlertMessage] = useState('');
 
@@ -112,37 +123,31 @@ const SignUp = (props) => {
 		}));
 	};
 
-	const handleSignUp = (event) => {
+	const handleSignUp = async (event) => {
 		event.preventDefault();
 
-		let localStorageUsersData = localStorage.getItem('usersData');
-		localStorageUsersData = JSON.parse(localStorageUsersData);
+		setLoading(true);
+		try {
+			const { data } = await axios({
+				method: 'POST',
+				url: 'http://localhost:5000/sign-up',
+				data: {
+					username: signUpFormControls.username.value,
+					password: signUpFormControls.password.value,
+					email: signUpFormControls.email.value,
+				},
+			});
 
-		let userExist = null;
-
-		if (localStorageUsersData) {
-			userExist = localStorageUsersData.find(
-				(user) => user.username === signUpFormControls.username.value,
-			);
-		} else {
-			localStorageUsersData = [];
-		}
-		console.log('this is userExist: ', userExist);
-
-		if (userExist) {
-			setAlertSeverity('error');
-			setAlertMessage('User With This User/Email Already Exist');
-		} else {
-			const newUser = {
-				username: signUpFormControls.username.value,
-				email: signUpFormControls.email.value,
-				password: signUpFormControls.password.value,
-				gallery: [],
-			};
-			localStorageUsersData.push(newUser);
+			console.log('this is res from sign up : ', data);
+			setAlertSeverity('success');
+			setAlertMessage(data.message);
 			props.history.push('/login');
+		} catch (err) {
+			console.log('there is an error to sign up: ', err.response.data.message);
+			setAlertSeverity('error');
+			setAlertMessage(err.response.data.message);
 		}
-		localStorage.setItem('usersData', JSON.stringify(localStorageUsersData));
+		setLoading(false);
 	};
 
 	const formElements = [];
@@ -200,6 +205,7 @@ const SignUp = (props) => {
 					}>
 					Sign Up
 				</Button>
+				{loading ? <CircularProgress /> : null}
 			</form>
 			<Typography variant='p' component='p'>
 				Already have account? <Link to='/login'>Login Here</Link>

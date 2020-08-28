@@ -2,14 +2,36 @@ import React from 'react';
 import { Container, Grid, Typography } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 import ProfileCard from '../../components/UI/profileCard/ProfileCard';
 import ImageCard from '../../components/UI/imageCard/ImageCard';
 import * as actions from '../../store/actions/auth';
 
 const Profile = (props) => {
-	const handleDeletePhoto = (imgUrl) => {
-		props.onDeletePhoto(props.username, imgUrl);
+	const handleDeletePhoto = async (photoUrl) => {
+		try {
+			const { data } = await axios({
+				method: 'POST',
+				url: 'http://localhost:5000/delete-photo',
+				data: {
+					username: props.username,
+					password: props.password,
+					photoUrl: photoUrl,
+				},
+			});
+
+			console.log('this is the data from the delete photo: ', data);
+			props.deletePhotoSuccess(data.gallery);
+		} catch (err) {
+			console.log('there is an error to delete the photo: ', err);
+		}
+
+		// const gallery = [...props.gallery];
+
+		// const updateUpdateGllery = gallery.filter((imgUrl) => imgUrl !== photoUrl);
+
+		// props.deletePhotoSuccess(updateUpdateGllery);
 	};
 
 	let gallerySection = (
@@ -21,10 +43,10 @@ const Profile = (props) => {
 
 	if (props.gallery.length > 0) {
 		console.log('this is props.gallery: ', props.gallery);
-		gallerySection = props.gallery.map((imgUrl) => (
-			<Grid key={imgUrl} item xs={12} sm={4} md={4} lg={4}>
+		gallerySection = props.gallery.map((photoUrl) => (
+			<Grid key={photoUrl} item xs={12} sm={4} md={4} lg={4}>
 				<ImageCard
-					imgUrl={imgUrl}
+					photoUrl={photoUrl}
 					buttonName='Delete'
 					handleClick={handleDeletePhoto}
 				/>
@@ -51,14 +73,15 @@ const Profile = (props) => {
 const mapStateToProps = (state) => {
 	return {
 		username: state.username,
+		password: state.password,
 		gallery: state.gallery,
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onDeletePhoto: (username, photoUrl) =>
-			dispatch(actions.deletePhoto(username, photoUrl)),
+		deletePhotoSuccess: (gallery) =>
+			dispatch(actions.deletePhotoSuccess(gallery)),
 	};
 };
 

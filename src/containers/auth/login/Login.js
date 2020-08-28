@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
-import { Container, FormControl, Button, Typography } from '@material-ui/core';
+import {
+	Container,
+	FormControl,
+	Button,
+	Typography,
+	CircularProgress,
+} from '@material-ui/core';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 import Input from '../../../components/UI/input/Input';
 import AlertMessage from '../../../components/UI/alert/AlertMessage';
@@ -38,7 +45,7 @@ const Login = (props) => {
 	});
 
 	const [loading, setLoading] = useState(false);
-
+	const [alertMessage, setAlertMessage] = useState('');
 	const checkValidity = (value, rules) => {
 		let isValid = true;
 
@@ -69,20 +76,36 @@ const Login = (props) => {
 		}));
 	};
 
-	const handleLogin = (event) => {
+	const handleLogin = async (event) => {
 		event.preventDefault();
 
-		// setLoading(true);
-		props.onAuth(
-			loginFormControls.username.value,
-			loginFormControls.password.value,
-		);
-		// setLoading(false);
-		if (props.isAuthenticated) {
-			props.history.push('/home');
-		} else {
-			// props.history.push('/login');
+		setLoading(true);
+
+		try {
+			const { data } = await axios({
+				method: 'POST',
+				url: 'http://localhost:5000/login',
+				data: {
+					username: loginFormControls.username.value,
+					password: loginFormControls.password.value,
+				},
+			});
+
+			const user = {
+				username: data.data.username,
+				password: data.data.password,
+				email: data.data.email,
+				gallery: data.data.gallery,
+			};
+			props.authSuccess(user.username, user.email, user.password, user.gallery);
+
+			localStorage.setItem('user', JSON.stringify(user));
+		} catch (err) {
+			console.log('eror in loginjs: ', err.response.data.message);
+			setAlertMessage(err.response.data.message);
 		}
+
+		setLoading(false);
 	};
 
 	const formElements = [];
@@ -112,12 +135,8 @@ const Login = (props) => {
 
 	let alertComponent = null;
 
-	if (props.loading) {
-		form = <div>loading</div>;
-	}
-
-	if (props.error) {
-		alertComponent = <AlertMessage severity='error' message={props.error} />;
+	if (alertMessage) {
+		alertComponent = <AlertMessage severity='error' message={alertMessage} />;
 	}
 
 	let authRedirect = null;
@@ -147,6 +166,7 @@ const Login = (props) => {
 					}>
 					Login
 				</Button>
+				{loading ? <CircularProgress /> : null}
 			</form>
 			<Typography variant='p' component='p'>
 				Don't have an account? <Link to='/sign-up'>Sign Up Here</Link>
@@ -165,7 +185,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onAuth: (username, password) => dispatch(actions.auth(username, password)),
+		authSuccess: (username, email, password, gallery) =>
+			dispatch(actions.authSuccess(username, email, password, gallery)),
 	};
 };
 

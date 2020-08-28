@@ -6,9 +6,11 @@ import {
 	DialogContentText,
 	DialogActions,
 	Button,
+	CircularProgress,
 } from '@material-ui/core';
 
 import Input from '../input/Input';
+import AlertMessage from '../alert/AlertMessage';
 
 const ConfirmDialog = (props) => {
 	const [confirmFormControl, setConfirmFormControl] = useState({
@@ -74,6 +76,9 @@ const ConfirmDialog = (props) => {
 			open={props.open}
 			onClose={props.handleClose}
 			aria-labelledby='responsive-dialog-title'>
+			{props.message && props.severity ? (
+				<AlertMessage severity={props.severity} message={props.message} />
+			) : null}
 			<DialogTitle id='responsive-dialog-title'>
 				Are You Absolutely Sure?
 			</DialogTitle>
@@ -102,6 +107,7 @@ const ConfirmDialog = (props) => {
 					}>
 					Confirm
 				</Button>
+				{props.message && props.severity ? <CircularProgress /> : null}
 				<Button
 					onClick={props.handleClose}
 					color='primary'
