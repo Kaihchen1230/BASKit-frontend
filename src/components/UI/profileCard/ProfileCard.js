@@ -76,11 +76,18 @@ const ProfileCard = (props) => {
 	const [open, setOpen] = useState(false);
 
 	const handleClickOpen = () => {
+		console.log('this is props: ', props);
 		if (isEditMode) {
 			setLoading(true);
 			setIsEditMode(false);
+			console.log(
+				'this is initialProfileFromControls: ',
+				initialProfileFromControls,
+			);
 			setProfileFormControls(initialProfileFromControls);
 			setLoading(false);
+			console.log('this is profileFromControls: ', profileFromControls);
+			window.location.reload();
 		} else {
 			setOpen(true);
 		}
