@@ -9,7 +9,6 @@ import {
 } from '@material-ui/core';
 
 import Input from '../input/Input';
-import './ConfirmDialog.css';
 
 const ConfirmDialog = (props) => {
 	const [confirmFormControl, setConfirmFormControl] = useState({

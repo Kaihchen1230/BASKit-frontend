@@ -25,11 +25,10 @@ const Profile = (props) => {
 				},
 			});
 
-			console.log('this is the data from the delete photo: ', data);
+			setAlertSeverity('success');
+			setAlertMessage(data.message);
 			props.deletePhotoSuccess(data.gallery);
-		} catch (err) {
-			console.log('there is an error to delete the photo: ', err);
-		}
+		} catch (err) {}
 	};
 
 	const handleShowAlert = (severity, message) => {
@@ -45,7 +44,6 @@ const Profile = (props) => {
 	);
 
 	if (props.gallery.length > 0) {
-		console.log('this is props.gallery: ', props.gallery);
 		gallerySection = props.gallery.map((photoUrl) => (
 			<Grid key={photoUrl} item xs={12} sm={4} md={4} lg={4}>
 				<ImageCard

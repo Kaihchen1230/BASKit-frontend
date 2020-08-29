@@ -1,9 +1,9 @@
 import * as actionTypes from './actionTypes';
-import axios from 'axios';
 
-export const authStart = () => {
+export const signUpSuccess = (message) => {
 	return {
-		type: actionTypes.AUTH_START,
+		type: actionTypes.SIGN_UP_SUCCESS,
+		message: message,
 	};
 };
 
@@ -14,44 +14,6 @@ export const authSuccess = (username, email, password, gallery) => {
 		email: email,
 		password: password,
 		gallery: gallery,
-	};
-};
-
-const localStorageSearch = () => {
-	let localStorageUsersData = localStorage.getItem('usersData');
-	localStorageUsersData = JSON.parse(localStorageUsersData);
-
-	return localStorageUsersData;
-};
-
-export const auth = (username, password) => {
-	return async (dispatch) => {
-		dispatch(authStart());
-
-		try {
-			const { data } = await axios({
-				method: 'POST',
-				url: 'http://localhost:5000/login',
-				data: {
-					username: username,
-					password: password,
-				},
-			});
-			console.log('this is data in auth success: ', data);
-			dispatch(
-				authSuccess(data.username, data.email, data.password, data.gallery),
-			);
-			const user = {
-				username: data.username,
-				password: data.password,
-				email: data.email,
-				gallery: data.gallery,
-			};
-			localStorage.setItem('user', JSON.stringify(user));
-		} catch (err) {
-			console.log('eror in login: ', err.response.data.message);
-			// dispatch(authFail(err.response.data.message));
-		}
 	};
 };
 
@@ -102,78 +64,6 @@ export const updateUserFail = (error) => {
 	return {
 		type: actionTypes.UPDATE_USER_FAIL,
 		error: error,
-	};
-};
-
-export const updateUser = (
-	oldUsername,
-	oldPassword,
-	oldEmail,
-	newUsername,
-	newPassword,
-	newEmail,
-) => {
-	return (dispatch) => {
-		dispatch(updateUserStart);
-
-		// api call here
-		const usersData = localStorageSearch();
-		let userExist = null;
-
-		// make sure the newUsername and newEmail dones't exist
-
-		if (usersData) {
-			userExist = usersData.find((user) => {
-				if (user.username === newUsername || user.email === newEmail) {
-					return user;
-				}
-			});
-		}
-
-		if (!userExist) {
-			let updateUsersData = [];
-			updateUsersData = usersData.map((user) => {
-				if (
-					user.username === oldUsername &&
-					user.password === oldPassword &&
-					user.email === oldEmail
-				) {
-					return {
-						username: newUsername,
-						password: newPassword,
-						email: newEmail,
-					};
-				} else {
-					return user;
-				}
-			});
-			console.log('this is updateUsersData: ', updateUsersData);
-			localStorage.setItem('usersData', JSON.stringify(updateUsersData));
-
-			const currentUser = localStorage.getItem('user');
-			let updateCurrentUser = JSON.parse(currentUser);
-			updateCurrentUser = {
-				username: newUsername,
-				password: newPassword,
-				email: newEmail,
-			};
-			console.log('this is currentUser in redux: ', updateCurrentUser);
-			localStorage.setItem('user', JSON.stringify(updateCurrentUser));
-			dispatch(updateUserSuccess(newUsername, newPassword, newEmail));
-		} else {
-			dispatch(updateUserFail('Username and/or Email Already Existed'));
-		}
-
-		if (!userExist) {
-			// console.log('there is no userExisted');
-			// dispatch(authFail('You Have Entered Invalid Username and/or Password'));
-		} else {
-			// console.log(`${username} existed and this is userExist: `, userExist);
-			dispatch(
-				authSuccess(userExist.username, userExist.email, userExist.password),
-			);
-			localStorage.setItem('user', JSON.stringify(userExist));
-		}
 	};
 };
 

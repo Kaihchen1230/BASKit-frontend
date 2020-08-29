@@ -8,10 +8,12 @@ import {
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { connect } from 'react-redux';
 
 import Input from '../../../components/UI/input/Input';
 import AlertMessage from '../../../components/UI/alert/AlertMessage';
 import Spinner from '../../../components/UI/spinner/Spinner';
+import * as actions from '../../../store/actions/auth';
 
 const initialSignUpFormControls = {
 	username: {
@@ -109,7 +111,6 @@ const SignUp = (props) => {
 
 	const inputChangedHandler = (event, controlName) => {
 		event.persist();
-		// console.log('this is vent.target.value: ', event.target.value);
 		setSignUpFormControls((prevState) => ({
 			...prevState,
 			[controlName]: {
@@ -139,12 +140,11 @@ const SignUp = (props) => {
 				},
 			});
 
-			console.log('this is res from sign up : ', data);
 			setAlertSeverity('success');
 			setAlertMessage(data.message);
+			props.signUpSucccess(data.message);
 			props.history.push('/login');
 		} catch (err) {
-			console.log('there is an error to sign up: ', err.response.data.message);
 			setAlertSeverity('error');
 			setAlertMessage(err.response.data.message);
 		}
@@ -219,4 +219,10 @@ const SignUp = (props) => {
 	);
 };
 
-export default SignUp;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		signUpSucccess: (message) => dispatch(actions.signUpSuccess(message)),
+	};
+};
+
+export default connect(null, mapDispatchToProps)(SignUp);

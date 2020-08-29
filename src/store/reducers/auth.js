@@ -5,17 +5,15 @@ const initialState = {
 	email: null,
 	password: null,
 	gallery: [],
-	error: null,
-	loading: false,
+	message: null,
 };
 
 const reducer = (state = initialState, action) => {
 	switch (action.type) {
-		case actionTypes.AUTH_START:
+		case actionTypes.SIGN_UP_SUCCESS:
 			return {
 				...state,
-				error: null,
-				loading: true,
+				message: action.message,
 			};
 
 		case actionTypes.AUTH_SUCCESS:
@@ -45,8 +43,6 @@ const reducer = (state = initialState, action) => {
 				username: action.newUsername,
 				password: action.newPassword,
 				email: action.newEmail,
-				error: null,
-				loading: false,
 			};
 
 		case actionTypes.ADD_PHOTO_SUCCESS:
