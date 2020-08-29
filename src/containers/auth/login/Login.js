@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-	Container,
-	FormControl,
-	Button,
-	Typography,
-	CircularProgress,
-} from '@material-ui/core';
+import { Container, FormControl, Button, Typography } from '@material-ui/core';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -79,7 +73,7 @@ const Login = (props) => {
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
-
+		props.signUpSucccess(null);
 		setLoading(true);
 
 		try {
@@ -102,7 +96,6 @@ const Login = (props) => {
 
 			localStorage.setItem('user', JSON.stringify(user));
 		} catch (err) {
-			console.log('eror in loginjs: ', err.response.data.message);
 			setAlertMessage(err.response.data.message);
 		}
 
@@ -136,6 +129,12 @@ const Login = (props) => {
 
 	let alertComponent = null;
 
+	if (props.message) {
+		alertComponent = (
+			<AlertMessage severity='success' message={props.message} />
+		);
+	}
+
 	if (alertMessage) {
 		alertComponent = <AlertMessage severity='error' message={alertMessage} />;
 	}
@@ -143,7 +142,6 @@ const Login = (props) => {
 	let authRedirect = null;
 
 	if (props.isAuthenticated) {
-		console.log('it is authenit');
 		authRedirect = <Redirect to='/home' />;
 	}
 
@@ -182,9 +180,8 @@ const Login = (props) => {
 
 const mapStateToProps = (state) => {
 	return {
-		error: state.error,
 		isAuthenticated: state.username !== null,
-		loading: state.loading,
+		message: state.message,
 	};
 };
 
@@ -192,6 +189,7 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		authSuccess: (username, email, password, gallery) =>
 			dispatch(actions.authSuccess(username, email, password, gallery)),
+		signUpSucccess: (message) => dispatch(actions.signUpSuccess(message)),
 	};
 };
 

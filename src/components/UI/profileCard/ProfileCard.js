@@ -75,17 +75,13 @@ const ProfileCard = (props) => {
 	const [open, setOpen] = useState(false);
 
 	const handleClickOpen = () => {
-		console.log('this is props: ', props);
 		if (isEditMode) {
 			setLoading(true);
 			setIsEditMode(false);
-			console.log(
-				'this is initialProfileFromControls: ',
-				initialProfileFromControls,
-			);
+
 			setProfileFormControls(initialProfileFromControls);
 			setLoading(false);
-			console.log('this is profileFromControls: ', profileFromControls);
+
 			window.location.reload();
 		} else {
 			setOpen(true);
@@ -97,8 +93,6 @@ const ProfileCard = (props) => {
 	};
 
 	const handleDelete = async () => {
-		console.log('delete press and this is props: ', props);
-
 		setLoading(true);
 		try {
 			const { data } = await axios({
@@ -110,13 +104,9 @@ const ProfileCard = (props) => {
 				},
 			});
 
-			console.log('this is the data after delete: ', data);
-
 			props.deleteUser();
 			props.props.history.push('/login');
-		} catch (err) {
-			console.log('there is an error to delete to account: ', err);
-		}
+		} catch (err) {}
 		setLoading(false);
 	};
 
@@ -161,36 +151,23 @@ const ProfileCard = (props) => {
 
 	const updateEditModeForProfileForm = (editMode, profileFrom) => {
 		setLoading(true);
-		console.log('this is profileFrom in the func: ', profileFrom);
-		console.log(
-			'this is the profilFromcontrol before update: ',
-			profileFromControls,
-		);
+
 		const updateProfileFormControls = { ...profileFrom };
 		for (const key of Object.keys(profileFrom)) {
-			// console.log('key:', key);
 			updateProfileFormControls[key] = {
 				...profileFrom[key],
 				elementConfig: { ...profileFrom[key].elementConfig },
 			};
 			updateProfileFormControls[key].elementConfig.disabled = editMode;
 			if (key === 'password' && !editMode) {
-				// console.log('this is password: ', key);
 				updateProfileFormControls[key].elementConfig.type = 'text';
 			} else if (key === 'password' && editMode) {
 				updateProfileFormControls[key].elementConfig.type = 'password';
 			}
 		}
 
-		console.log(
-			'updateProfileFormControls in the function: ',
-			updateProfileFormControls,
-		);
 		setProfileFormControls(updateProfileFormControls);
-		console.log(
-			'profileFormControl after update in the function: ',
-			profileFromControls,
-		);
+
 		setLoading(false);
 	};
 
@@ -214,7 +191,6 @@ const ProfileCard = (props) => {
 						newEmail: profileFromControls.email.value,
 					},
 				});
-				console.log('this is the data from update: ', data.updatedAccount);
 				const updatedAccount = data.updatedAccount;
 
 				props.updateUserSuccess(
@@ -224,7 +200,6 @@ const ProfileCard = (props) => {
 				);
 				updateProfileFormControls = { ...profileFromControls };
 				for (const key of Object.keys(profileFromControls)) {
-					// console.log('key:', key);
 					updateProfileFormControls[key] = {
 						...profileFromControls[key],
 						elementConfig: { ...profileFromControls[key].elementConfig },
@@ -239,13 +214,8 @@ const ProfileCard = (props) => {
 				setProfileFormControls(updateProfileFormControls);
 				props.handleShowAlert('success', data.message);
 			} catch (err) {
-				console.log(
-					'there is an error to update the account: ',
-					err.response.data.message,
-				);
 				updateProfileFormControls = { ...initialProfileFromControls };
 				for (const key of Object.keys(initialProfileFromControls)) {
-					// console.log('key:', key);
 					updateProfileFormControls[key] = {
 						...initialProfileFromControls[key],
 						elementConfig: {
@@ -253,13 +223,7 @@ const ProfileCard = (props) => {
 						},
 					};
 					updateProfileFormControls[key].elementConfig.disabled = false;
-					if ('unique' in updateProfileFormControls[key]) {
-						updateProfileFormControls[key].unique = false;
-						console.log(
-							'this is invalid unique: ',
-							updateProfileFormControls[key].unique,
-						);
-					}
+
 					if (key === 'password' && !isEditMode) {
 						updateProfileFormControls[key].elementConfig.type = 'text';
 					} else if (key === 'password' && isEditMode) {
@@ -268,19 +232,16 @@ const ProfileCard = (props) => {
 				}
 				setProfileFormControls(updateProfileFormControls);
 
-				// setProfileFormControls(initialProfileFromControls);
 				setIsEditMode(true);
-				// console.log('inside of the error case: ');
 
 				props.handleShowAlert('error', err.response.data.message);
 			}
 			setLoading(false);
 		} else {
 			setIsEditMode(true);
-			// console.log('inside of the else case: ');
+
 			updateProfileFormControls = { ...profileFromControls };
 			for (const key of Object.keys(profileFromControls)) {
-				// console.log('key:', key);
 				updateProfileFormControls[key] = {
 					...profileFromControls[key],
 					elementConfig: { ...profileFromControls[key].elementConfig },
@@ -306,7 +267,6 @@ const ProfileCard = (props) => {
 	}
 
 	form = formElements.map((formElement) => {
-		// console.log('this is formElement: ', formElement);
 		return (
 			<FormControl
 				key={formElement.id}

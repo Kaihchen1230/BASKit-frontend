@@ -8,7 +8,6 @@ import ProfileArea from '../../components/headerBar/profileArea/ProfileArea';
 const HeaderBar = (props) => {
 	let showProfileArea = null;
 
-	console.log('this is props: ', props);
 	if (props.isAuth) {
 		showProfileArea = <ProfileArea />;
 	}

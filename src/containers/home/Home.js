@@ -79,13 +79,11 @@ const Home = (props) => {
 				},
 			});
 
-			console.log('this is data in search : ', data.photos);
 			setAlertSeverity('');
 			setAlertMessage('');
 
 			setSearchResults(data.photos);
 		} catch (err) {
-			console.log('there is an error in search: ', err.response.data.message);
 			setAlertSeverity('error');
 			setAlertMessage(err.response.data.message);
 			setSearchResults([]);
@@ -106,16 +104,14 @@ const Home = (props) => {
 				},
 			});
 			setAlertMessage();
-			// console.log('this is the data: ', data);
 			setAlertMessage(data.message);
 			setAlertSeverity('success');
 			props.addPhotoSuccess(photoUrl);
 		} catch (err) {
-			console.log('there is an error to add to photo:  ', err);
 			setAlertMessage(err.response.data.message);
 			setAlertSeverity('error');
 		}
-		// setLoading(false);
+		window.scrollTo(0, 0);
 	};
 
 	let imageArea = null;

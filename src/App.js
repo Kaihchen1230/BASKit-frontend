@@ -23,7 +23,6 @@ function App(props) {
 	let authRoutes = null;
 
 	if (props.isAuthenticated) {
-		console.log('it is authenticated');
 		authRoutes = (
 			<Switch>
 				<Route exact path={('/', '/home')} component={Home} />
@@ -34,7 +33,6 @@ function App(props) {
 			</Switch>
 		);
 	} else {
-		console.log('it is not authenticated');
 		authRoutes = (
 			<Switch>
 				<Route exact path={['/', '/login']} component={Login} />
