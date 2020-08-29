@@ -79,7 +79,7 @@ const Login = (props) => {
 		try {
 			const { data } = await axios({
 				method: 'POST',
-				url: 'http://localhost:5000/login',
+				url: 'http://18.234.136.82:5000/login',
 				data: {
 					username: loginFormControls.username.value,
 					password: loginFormControls.password.value,
@@ -131,12 +131,12 @@ const Login = (props) => {
 
 	if (props.message) {
 		alertComponent = (
-			<AlertMessage severity='success' message={props.message} />
+			<AlertMessage severity={props.severity} message={props.message} />
 		);
 	}
 
 	if (alertMessage) {
-		alertComponent = <AlertMessage severity='error' message={alertMessage} />;
+		alertComponent = <AlertMessage severity={'error'} message={alertMessage} />;
 	}
 
 	let authRedirect = null;
@@ -181,6 +181,7 @@ const Login = (props) => {
 const mapStateToProps = (state) => {
 	return {
 		isAuthenticated: state.username !== null,
+		severity: state.severity,
 		message: state.message,
 	};
 };

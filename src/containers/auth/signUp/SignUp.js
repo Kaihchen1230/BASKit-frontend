@@ -132,7 +132,7 @@ const SignUp = (props) => {
 		try {
 			const { data } = await axios({
 				method: 'POST',
-				url: 'http://localhost:5000/sign-up',
+				url: 'http://18.234.136.82:5000/sign-up',
 				data: {
 					username: signUpFormControls.username.value,
 					password: signUpFormControls.password.value,
@@ -142,7 +142,7 @@ const SignUp = (props) => {
 
 			setAlertSeverity('success');
 			setAlertMessage(data.message);
-			props.signUpSucccess(data.message);
+			props.signUpSucccess('success', data.message);
 			props.history.push('/login');
 		} catch (err) {
 			setAlertSeverity('error');
@@ -221,7 +221,8 @@ const SignUp = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		signUpSucccess: (message) => dispatch(actions.signUpSuccess(message)),
+		signUpSucccess: (severity, message) =>
+			dispatch(actions.signUpSuccess(severity, message)),
 	};
 };
 

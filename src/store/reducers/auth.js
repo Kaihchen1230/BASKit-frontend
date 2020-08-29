@@ -6,6 +6,7 @@ const initialState = {
 	password: null,
 	gallery: [],
 	message: null,
+	severity: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -13,6 +14,7 @@ const reducer = (state = initialState, action) => {
 		case actionTypes.SIGN_UP_SUCCESS:
 			return {
 				...state,
+				severity: action.severity,
 				message: action.message,
 			};
 

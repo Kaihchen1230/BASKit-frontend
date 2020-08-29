@@ -97,7 +97,7 @@ const ProfileCard = (props) => {
 		try {
 			const { data } = await axios({
 				method: 'POST',
-				url: 'http://localhost:5000/delete-account',
+				url: 'http://18.234.136.82:5000/delete-account',
 				data: {
 					username: props.username,
 					password: props.password,
@@ -181,7 +181,7 @@ const ProfileCard = (props) => {
 			try {
 				const { data } = await axios({
 					method: 'POST',
-					url: 'http://localhost:5000/update-account',
+					url: 'http://18.234.136.82:5000/update-account',
 					data: {
 						oldUsername: props.username,
 						oldPassword: props.password,
