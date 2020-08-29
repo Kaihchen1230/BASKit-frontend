@@ -1,7 +1,7 @@
 import React from 'react';
-import { AppBar, Toolbar } from '@material-ui/core';
+import { AppBar, Toolbar, Link } from '@material-ui/core';
 import { connect } from 'react-redux';
-
+import { Link as RouterLink } from 'react-router-dom';
 import LogoArea from '../../components/headerBar/logoArea/LogoArea';
 import ProfileArea from '../../components/headerBar/profileArea/ProfileArea';
 
@@ -16,7 +16,17 @@ const HeaderBar = (props) => {
 		<AppBar position='static' style={{ marginBottom: '40px' }}>
 			<Toolbar>
 				<LogoArea />
-				{showProfileArea}
+				{props.isAuth ? (
+					<ProfileArea />
+				) : (
+					<Link
+						component={RouterLink}
+						to='/login'
+						underline='hover'
+						style={{ color: 'white' }}>
+						Login Here
+					</Link>
+				)}
 			</Toolbar>
 		</AppBar>
 	);
