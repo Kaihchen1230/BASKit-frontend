@@ -1,8 +1,9 @@
 import * as actionTypes from './actionTypes';
 
-export const signUpSuccess = (message) => {
+export const signUpSuccess = (severity, message) => {
 	return {
 		type: actionTypes.SIGN_UP_SUCCESS,
+		severity: severity,
 		message: message,
 	};
 };

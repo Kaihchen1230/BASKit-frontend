@@ -142,7 +142,7 @@ const SignUp = (props) => {
 
 			setAlertSeverity('success');
 			setAlertMessage(data.message);
-			props.signUpSucccess(data.message);
+			props.signUpSucccess('success', data.message);
 			props.history.push('/login');
 		} catch (err) {
 			setAlertSeverity('error');
@@ -221,7 +221,8 @@ const SignUp = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		signUpSucccess: (message) => dispatch(actions.signUpSuccess(message)),
+		signUpSucccess: (severity, message) =>
+			dispatch(actions.signUpSuccess(severity, message)),
 	};
 };
 

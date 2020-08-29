@@ -73,8 +73,6 @@ const Home = (props) => {
 				method: 'POST',
 				url: 'http://18.234.136.82:5000/search-photo',
 				data: {
-					username: props.username,
-					password: props.password,
 					searchTerm: searchFormControl.searchField.value,
 				},
 			});
@@ -92,26 +90,31 @@ const Home = (props) => {
 	};
 
 	const handleAddPhoto = async (photoUrl) => {
-		// setLoading(true);
-		try {
-			const { data } = await axios({
-				method: 'POST',
-				url: 'http://18.234.136.82:5000/save-photo',
-				data: {
-					username: props.username,
-					password: props.password,
-					photoUrl: photoUrl,
-				},
-			});
-			setAlertMessage();
-			setAlertMessage(data.message);
-			setAlertSeverity('success');
-			props.addPhotoSuccess(photoUrl);
-		} catch (err) {
-			setAlertMessage(err.response.data.message);
-			setAlertSeverity('error');
+
+		if (props.isAuthenticated) {
+			try {
+				const { data } = await axios({
+					method: 'POST',
+					url: 'http://18.234.136.82:5000/save-photo',
+					data: {
+						username: props.username,
+						password: props.password,
+						photoUrl: photoUrl,
+					},
+				});
+				setAlertMessage();
+				setAlertMessage(data.message);
+				setAlertSeverity('success');
+				props.addPhotoSuccess(photoUrl);
+			} catch (err) {
+				setAlertMessage(err.response.data.message);
+				setAlertSeverity('error');
+			}
+			window.scrollTo(0, 0);
+		} else {
+			props.signUpSucccess('error', 'Please login to add the photo!');
+			props.history.push('/login');
 		}
-		window.scrollTo(0, 0);
 	};
 
 	let imageArea = null;
@@ -188,13 +191,18 @@ const Home = (props) => {
 
 const mapStateToProps = (state) => {
 	return {
+		isAuthenticated: state.username !== null,
 		username: state.username,
 		password: state.password,
+		severity: state.severity,
+		message: state.message,
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
+		signUpSucccess: (severity, message) =>
+			dispatch(actions.signUpSuccess(severity, message)),
 		onAddPhoto: (username, password, photoInfo) =>
 			dispatch(actions.addPhoto(username, password, photoInfo)),
 

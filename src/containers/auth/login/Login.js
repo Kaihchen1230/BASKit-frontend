@@ -131,12 +131,12 @@ const Login = (props) => {
 
 	if (props.message) {
 		alertComponent = (
-			<AlertMessage severity='success' message={props.message} />
+			<AlertMessage severity={props.severity} message={props.message} />
 		);
 	}
 
 	if (alertMessage) {
-		alertComponent = <AlertMessage severity='error' message={alertMessage} />;
+		alertComponent = <AlertMessage severity={'error'} message={alertMessage} />;
 	}
 
 	let authRedirect = null;
@@ -181,6 +181,7 @@ const Login = (props) => {
 const mapStateToProps = (state) => {
 	return {
 		isAuthenticated: state.username !== null,
+		severity: state.severity,
 		message: state.message,
 	};
 };

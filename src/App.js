@@ -35,9 +35,10 @@ function App(props) {
 	} else {
 		authRoutes = (
 			<Switch>
-				<Route exact path={['/', '/login']} component={Login} />
+				<Route exact path={('/', '/home')} component={Home} />
+				<Route path='/login' component={Login} />
 				<Route path='/sign-up' component={SignUp} />
-				{/* <Redirect from='/' to='/login' /> */}
+				<Redirect exact from='/' to='/home' />
 			</Switch>
 		);
 	}
