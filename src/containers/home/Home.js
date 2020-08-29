@@ -90,6 +90,7 @@ const Home = (props) => {
 	};
 
 	const handleAddPhoto = async (photoUrl) => {
+
 		if (props.isAuthenticated) {
 			try {
 				const { data } = await axios({
