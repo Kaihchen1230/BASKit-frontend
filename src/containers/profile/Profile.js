@@ -17,7 +17,7 @@ const Profile = (props) => {
 		try {
 			const { data } = await axios({
 				method: 'POST',
-				url: 'http://localhost:5000/delete-photo',
+				url: 'http://18.234.136.82:5000/delete-photo',
 				data: {
 					username: props.username,
 					password: props.password,
