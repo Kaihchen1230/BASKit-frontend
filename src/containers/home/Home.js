@@ -71,7 +71,7 @@ const Home = (props) => {
 		try {
 			const { data } = await axios({
 				method: 'POST',
-				url: 'http://18.234.136.82:5000/search-photo',
+				url: 'http://localhost:5000/search-photo',
 				data: {
 					searchTerm: searchFormControl.searchField.value,
 				},
@@ -90,12 +90,11 @@ const Home = (props) => {
 	};
 
 	const handleAddPhoto = async (photoUrl) => {
-
 		if (props.isAuthenticated) {
 			try {
 				const { data } = await axios({
 					method: 'POST',
-					url: 'http://18.234.136.82:5000/save-photo',
+					url: 'http://localhost:5000/save-photo',
 					data: {
 						username: props.username,
 						password: props.password,

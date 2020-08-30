@@ -132,7 +132,7 @@ const SignUp = (props) => {
 		try {
 			const { data } = await axios({
 				method: 'POST',
-				url: 'http://18.234.136.82:5000/sign-up',
+				url: 'http://localhost:5000/sign-up',
 				data: {
 					username: signUpFormControls.username.value,
 					password: signUpFormControls.password.value,

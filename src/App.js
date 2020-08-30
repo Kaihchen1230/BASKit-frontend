@@ -8,14 +8,14 @@ import Login from './containers/auth/login/Login';
 import Logout from './containers/auth/logout/logout';
 import Home from './containers/home/Home';
 import Profile from './containers/profile/Profile';
+import NotFound from './components/notFound/NotFound';
 import * as actions from './store/actions/auth';
 
 function App(props) {
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		setLoading(true);
-
+		console.log('in here');
 		props.onTryAuthLogin();
 		setLoading(false);
 	}, []);
@@ -23,37 +23,37 @@ function App(props) {
 	let authRoutes = null;
 
 	if (props.isAuthenticated) {
+		console.log('in if');
 		authRoutes = (
 			<Switch>
-				<Route exact path={('/', '/home')} component={Home} />
+				<Route exact path={['/', '/home']} component={Home} />
 				<Route path='/profile' component={Profile} />
 				<Route path='/logout' component={Logout} />
-				<Redirect from='/login' to='/home' />
-				<Redirect exact from='/*' to='/home' />
+				<Route path='/404' component={NotFound} />
+				<Redirect exact from='/*' to='/404' />
 			</Switch>
 		);
 	} else {
+		console.log('in else');
 		authRoutes = (
 			<Switch>
-				<Route exact path={('/', '/home')} component={Home} />
+				<Route exact path={['/', '/home']} component={Home} />
 				<Route path='/login' component={Login} />
 				<Route path='/sign-up' component={SignUp} />
-				<Redirect exact from='/' to='/home' />
+				<Route component={NotFound} />
+
+				{/* <Route path='/404' component={NotFound} />
+				<Redirect exact from='/*' to='/404' /> */}
 			</Switch>
 		);
 	}
 
-	if (loading) {
-		console.log('goes to here');
-		return <div>loading</div>;
-	} else {
-		return (
-			<div>
-				<HeaderBar />
-				{authRoutes}
-			</div>
-		);
-	}
+	return (
+		<div>
+			<HeaderBar />
+			{authRoutes}
+		</div>
+	);
 }
 const mapStateToProps = (state) => {
 	return {

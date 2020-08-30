@@ -74,12 +74,12 @@ const Login = (props) => {
 	const handleLogin = async (event) => {
 		event.preventDefault();
 		props.signUpSucccess(null);
-		setLoading(true);
 
 		try {
+			setLoading(true);
 			const { data } = await axios({
 				method: 'POST',
-				url: 'http://18.234.136.82:5000/login',
+				url: 'http://localhost:5000/login',
 				data: {
 					username: loginFormControls.username.value,
 					password: loginFormControls.password.value,
@@ -95,11 +95,11 @@ const Login = (props) => {
 			props.authSuccess(user.username, user.email, user.password, user.gallery);
 
 			localStorage.setItem('user', JSON.stringify(user));
+			// props.history.push('/');
+			setLoading(false);
 		} catch (err) {
 			setAlertMessage(err.response.data.message);
 		}
-
-		setLoading(false);
 	};
 
 	const formElements = [];
@@ -142,6 +142,7 @@ const Login = (props) => {
 	let authRedirect = null;
 
 	if (props.isAuthenticated) {
+		console.log('this is inside authenticated: ', props.username);
 		authRedirect = <Redirect to='/home' />;
 	}
 
@@ -180,6 +181,7 @@ const Login = (props) => {
 
 const mapStateToProps = (state) => {
 	return {
+		username: state.username,
 		isAuthenticated: state.username !== null,
 		severity: state.severity,
 		message: state.message,
