@@ -79,7 +79,7 @@ const Login = (props) => {
 		try {
 			const { data } = await axios({
 				method: 'POST',
-				url: 'http://18.234.136.82:5000/login',
+				url: 'http://localhost:5000/login',
 				data: {
 					username: loginFormControls.username.value,
 					password: loginFormControls.password.value,
@@ -92,14 +92,14 @@ const Login = (props) => {
 				email: data.data.email,
 				gallery: data.data.gallery,
 			};
+			setLoading(false);
 			props.authSuccess(user.username, user.email, user.password, user.gallery);
 
 			localStorage.setItem('user', JSON.stringify(user));
 		} catch (err) {
 			setAlertMessage(err.response.data.message);
+			setLoading(false);
 		}
-
-		setLoading(false);
 	};
 
 	const formElements = [];
@@ -144,6 +144,7 @@ const Login = (props) => {
 	if (props.isAuthenticated) {
 		authRedirect = <Redirect to='/home' />;
 	}
+	console.log('this is authRedirect: ', authRedirect);
 
 	const loginFormSection = (
 		<form onSubmit={handleLogin}>
